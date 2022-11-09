@@ -1,0 +1,9 @@
+flipTurn is a portable, rechargeable and wireless foot switch designed to turn pages on sheet music collection Apps like Unreal Book or On Song. Based around a DFRobot ESP-32 microcontroller, the foot switch uses BLE (Bluetooth Low Energy) to wirelessly send pagination commands to an iPad or other connected device. 
+
+
+cpp
+platformio
+kicad
+3d-printing
+esp32-arduino
+firebeetle-esp32

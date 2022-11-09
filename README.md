@@ -22,7 +22,7 @@
 
 :construction:  ***unfinished - project under development***  :construction:
 
-ESP-32 based bluetooth-enabled page foot turner designed to work with iPad music apps like Unreal Book
+ESP-32 based BLE foot operated page-turner designed to work with iPad music apps like Unreal Book
 
 ## hardware
 

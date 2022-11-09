@@ -26,7 +26,7 @@
  *    Project Repository:  https://github.com/cwgstreet/flipTurn
  *    Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
  *
- *    Code intended to work with the following hardware
+ *    Code designed to work with the following hardware
  *      DFRobot ESP-32 dfr0478 module
  *      3.7V LiPo rechargeable battery
  *      microswitches
@@ -57,7 +57,6 @@
  *    Revisions:
  *      2022.10.31   V1 under development
  *      
- *
  * ************************************************************************************
  */
 
@@ -140,7 +139,7 @@ void setup() {
 void loop() { 
 
   
-  
+  //loop code here
   
   
   

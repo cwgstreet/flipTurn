@@ -73,6 +73,14 @@
 
 #include "esp_adc_cal.h"
 
+//? **************  Selective Debug Scaffolding *********************
+// Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
+//   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
+//   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
+//? *****************************************************************
+//#define DEBUG 1           // uncomment to debug ESP32 ADC calibration
+//? **************  end Selective Debug Scaffolding ******************
+
 // Li-Po battery management, per Firebeetle-2-ESP32-E motion sensor project (GPL2)
 #define LOW_BATTERY_VOLTAGE 3.20
 #define VERY_LOW_BATTERY_VOLTAGE 3.10
@@ -84,15 +92,15 @@ int currentBattLevel = 0;
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
 
 /******************************************************************************
-Adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
+Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
 ----------------
-Description.: reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
-                must bridge zero ohm pads on board to enable voltage divider
+Description.: Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
+                note: must bridge zero ohm pads on board to enable voltage divider hardware
 
               if the ESP32-E has calibration eFused those will be used.
               In comparison with a regular voltmeter the values of ESP32 and
               multimeter differ only about 0.05V
-Input Value.: -
+Input Value : -
 Return Value: battery voltage in volts
 ******************************************************************************/
 float readBattery() {
@@ -105,13 +113,19 @@ float readBattery() {
     adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
     switch (esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars)) {
         case ESP_ADC_CAL_VAL_EFUSE_TP:
-            Serial.println("Characterized using Two Point Value");
+#ifdef DEBUG
+            Serial.println(F("Characterized using Two Point Value"));
+#endif
             break;
         case ESP_ADC_CAL_VAL_EFUSE_VREF:
+#ifdef DEBUG
             Serial.printf("Characterized using eFuse Vref (%d mV)\r\n", adc_chars.vref);
+#endif
             break;
         default:
+//#ifdef DEBUG
             Serial.printf("Characterized using Default Vref (%d mV)\r\n", 1100);
+//#endif
     }
 
     // to avoid noise, sample the pin several times and average the result
@@ -123,11 +137,13 @@ float readBattery() {
     // due to the voltage divider (1M+1M) values must be multiplied by 2
     // and convert mV to V
     return esp_adc_cal_raw_to_voltage(value, &adc_chars) * 2.0 / 1000.0;
-}
+}  // end readBattery() function *********************************************
 
 void setup() {
     Serial.begin(115200);
+    #ifdef DEBUG
     Serial.println("Starting BLE work!");
+    #endif
     bleKeyboard.begin();
 }
 

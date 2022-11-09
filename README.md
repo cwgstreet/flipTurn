@@ -20,7 +20,7 @@
 <br>
 
 
-:construction:  unfinished - project under development  :construction:
+:construction:  ***unfinished - project under development***  :construction:
 
 ESP-32 based bluetooth-enabled page foot turner designed to work with iPad music apps like Unreal Book
 

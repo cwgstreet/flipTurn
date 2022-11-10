@@ -1,25 +1,26 @@
-/* *************************************************************************************
+
+/** *************************************************************************************
  *    flipTurn-main.cpp
  *
- *   ---------------------------------------------------------------------------------
- *   flipTurn - Rechargeable bluetooth foot switch pedal to page-turn sheet music apps
- *   Copyright (C) 2022 Carl W Greenstreet
+ **  ---------------------------------------------------------------------------------
+ **  flipTurn - Rechargeable bluetooth foot switch pedal to page-turn sheet music apps
+ **  Copyright (C) 2022 Carl W Greenstreet
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License along
- *   with this program; if not, write to the Free Software Foundation, Inc.,
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- *   ---------------------------------------------------------------------------------
+ **  This program is free software; you can redistribute it and/or modify
+ **  it under the terms of the GNU General Public License as published by
+ **  the Free Software Foundation; either version 2 of the License, or
+ **  (at your option) any later version.
+ **
+ **  This program is distributed in the hope that it will be useful,
+ **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ **  GNU General Public License for more details.
+ ** 
+ **  You should have received a copy of the GNU General Public License along
+ **  with this program; if not, write to the Free Software Foundation, Inc.,
+ **  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ **
+ **  ---------------------------------------------------------------------------------
  *
  *    Purpose:  ESP-Arduino software to send BLE pagnation commands to music Apps like Unreal Book
  *
@@ -30,7 +31,6 @@
  *      DFRobot ESP-32 dfr0478 module
  *      3.7V LiPo rechargeable battery
  *      microswitches
- *
  *
  *    Credits (3rd Party Libraries, code snippets, etc)
  *
@@ -55,7 +55,7 @@
  *      License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
  *
  *    Revisions:
- *      2022.10.31   V1 under development
+ *      2022.10.31   Ver1 - under development
  *
  * ************************************************************************************
  */

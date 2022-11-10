@@ -3,7 +3,7 @@
  *    flipTurn-main.cpp
  *
  **  ---------------------------------------------------------------------------------
- **  flipTurn - Rechargeable bluetooth foot switch pedal to page-turn sheet music apps
+ **  flipTurn - ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
  **  Copyright (C) 2022 Carl W Greenstreet
  *
  **  This program is free software; you can redistribute it and/or modify
@@ -15,14 +15,13 @@
  **  but WITHOUT ANY WARRANTY; without even the implied warranty of
  **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  **  GNU General Public License for more details.
- ** 
+ **
  **  You should have received a copy of the GNU General Public License along
  **  with this program; if not, write to the Free Software Foundation, Inc.,
  **  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- **
  **  ---------------------------------------------------------------------------------
  *
- *    Purpose:  ESP-Arduino software to send BLE pagnation commands to music Apps like Unreal Book
+ *    Purpose:  ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
  *
  *    Project Repository:  https://github.com/cwgstreet/flipTurn
  *    Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
@@ -33,26 +32,25 @@
  *      microswitches
  *
  *    Credits (3rd Party Libraries, code snippets, etc)
- *
+ *    -------------------------------------------------
  *     This application uses Open Source components. You can find the source code of their open source projects
  *     along with license information below. We acknowledge and are grateful to these developers for their
  *     contributions to open source.
  *
- *       Project: Bounce2  https://github.com/thomasfredericks/Bounce2
+ **      Project: Bounce2  https://github.com/thomasfredericks/Bounce2
  *       Use: Debouncing library for Arduino and Wiring
  *       Copyright (c) 2013 thomasfredericks
  *       License (MIT) https://github.com/thomasfredericks/Bounce2/blob/master/LICENSE
  *
- *       Project: ESP32-BLE-Keboard  https://github.com/T-vK/ESP32-BLE-Keyboard
+ **      Project: ESP32-BLE-Keboard  https://github.com/T-vK/ESP32-BLE-Keyboard
  *       Use: BLE Keboard library for ESP32 devices; used to send pagnation commands to iPad
  *       Copyright (c) 2019 T-vK
  *       License (MIT / GPL3) licence discussion: https://github.com/T-vK/ESP32-BLE-Keyboard/issues/60
  *
- *      https://github.com/Torxgewinde/Firebeetle-2-ESP32-E
- *      Project: Firebeetle-2-ESP32-E motion sensor https://github.com/Torxgewinde/Firebeetle-2-ESP32-E
- *      Incorporated / adapted code snippets on measuring and managing LiPo battery voltage with ESP-32
- *      Copyright (C) 2021 Tom Stöveken
- *      License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
+ **      Project: Firebeetle-2-ESP32-E motion sensor https://github.com/Torxgewinde/Firebeetle-2-ESP32-E
+ *       Incorporated / adapted code snippets on measuring and managing LiPo battery voltage with ESP-32
+ *       Copyright (C) 2021 Tom Stöveken
+ *       License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
  *
  *    Revisions:
  *      2022.10.31   Ver1 - under development
@@ -117,15 +115,17 @@ float readBattery() {
             Serial.println(F("Characterized using Two Point Value"));
 #endif
             break;
+
         case ESP_ADC_CAL_VAL_EFUSE_VREF:
 #ifdef DEBUG
             Serial.printf("Characterized using eFuse Vref (%d mV)\r\n", adc_chars.vref);
 #endif
             break;
+
         default:
-//#ifdef DEBUG
+            //#ifdef DEBUG
             Serial.printf("Characterized using Default Vref (%d mV)\r\n", 1100);
-//#endif
+            //#endif
     }
 
     // to avoid noise, sample the pin several times and average the result
@@ -141,9 +141,9 @@ float readBattery() {
 
 void setup() {
     Serial.begin(115200);
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.println("Starting BLE work!");
-    #endif
+#endif
     bleKeyboard.begin();
 }
 

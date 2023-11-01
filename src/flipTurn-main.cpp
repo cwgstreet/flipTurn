@@ -4,7 +4,7 @@
  *
  **  ---------------------------------------------------------------------------------
  **  flipTurn - ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
- **  Copyright (C) 2022 Carl W Greenstreet
+ **  Copyright (C) 2022-2023 Carl W Greenstreet
  *
  **  This program is free software; you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@
  *       Copyright (c) 2013 thomasfredericks
  *       License (MIT) https://github.com/thomasfredericks/Bounce2/blob/master/LICENSE
  *
- **      Project: ESP32-BLE-Keboard  https://github.com/T-vK/ESP32-BLE-Keyboard
- *       Use: BLE Keboard library for ESP32 devices; used to send pagnation commands to iPad
+ **      Project: ESP32-BLE-Keyboard  https://github.com/T-vK/ESP32-BLE-Keyboard
+ *       Use: BLE Keyboard library for ESP32 devices; used to send pagnation commands to iPad
  *       Copyright (c) 2019 T-vK
  *       License (MIT / GPL3) licence discussion: https://github.com/T-vK/ESP32-BLE-Keyboard/issues/60
  *
@@ -64,7 +64,7 @@
  *       for device schematic and breadboard hookup pictures
  * *******************************************************/
 
-// external libraries:
+// external libraries: 
 #include <Arduino.h>  //* IDE requires Arduino framework to be explicitly included
 #include <Bounce2.h>
 #include <BleKeyboard.h>

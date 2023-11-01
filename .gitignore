@@ -1,5 +1,58 @@
+
+
+ Ignore Mac system files
+.DS_store
+
+# Ignore powerpoint files
+*.ppt*
+
+# Ignore Excel files
+*.xlsx
+/Hardware/*.xlsx
+
+# Ignore LibreOffice binary files
+*.ODT
+*.odt
+*.FODT
+*.ODS
+*.ods
+*.FODS
+*.ODP
+*.odp
+*.FODP
+*.ODG
+*.odg
+*.FODG
+*.ODF
+*.odf
+
+# Ignore Kicad backup files files
+*.bak
+
+# Ignore old versions
+*.*old
+
+# Ignore PlatformIO config files
 .pio
 .vscode/.browse.c_cpp.db*
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+/Code/.pio
+/Code/.vscode/.browse.c_cpp.db*
+/Code/.vscode/c_cpp_properties.json
+/Code/.vscode/launch.json
+/Code/.vscode/ipch
+.pio
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch
+.VSCodeCounter
+
+# Ignore extras directory - stuff I don't want on git
+extras/
+
+# Ignore confidential information lib - usernames, passwords, API keys
+lib/myConstants/secrets.h
+

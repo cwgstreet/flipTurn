@@ -57,3 +57,6 @@ resources/
 # Ignore confidential information lib - usernames, passwords, API keys
 lib/myConstants/secrets.h
 
+# Ignore lock files for libreOffice
+*.~lock*
+

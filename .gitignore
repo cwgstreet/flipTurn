@@ -58,5 +58,5 @@ resources/
 lib/myConstants/secrets.h
 
 # Ignore lock files for libreOffice
-*.~lock*
+.~lock*
 

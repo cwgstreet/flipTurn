@@ -54,6 +54,8 @@
  *       Use: BLE Keyboard library for ESP32 devices; used to send pagnation commands to iPad
  *       Copyright (c) 2019 T-vK
  *       License (MIT / GPL3) licence discussion: https://github.com/T-vK/ESP32-BLE-Keyboard/issues/60
+ *       Fork used in this project: https://github.com/cwgstreet/ESP32-BLE-Keyboard-with-EJECT
+ *       Fork enables KEY_MEDIA_EJECT keypress, necessary to toggle on virtual onscreen keyboard in IOS
  *
  **      Project: Firebeetle-2-ESP32-E motion sensor https://github.com/Torxgewinde/Firebeetle-2-ESP32-E
  *       Incorporated / adapted code snippets on measuring and managing LiPo battery voltage with ESP-32
@@ -78,13 +80,17 @@
 
 #include "esp_adc_cal.h"
 
+// internal (user) libraries:
+// #include "periphials.h"    // serial monitor function tests and usuage routines
+#include "press_type.h"  // wrapper library abstracting Yabl / Bounce2 routines
+
 //? **************  Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
 //   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
 //? *****************************************************************
-// #define DEBUG 1           // uncomment to debug ESP32 ADC calibration
-//? **************  end Selective Debug Scaffolding ******************
+#define DEBUG 1  // uncomment to debug
+//? ************ end Selective Debug Scaffolding ********************
 
 // Li-Po battery management, per Firebeetle-2-ESP32-E motion sensor project (GPL2);
 //   code snippets adapted to Firebeetle DFR0478 (Ver1)
@@ -94,17 +100,20 @@
 
 int currentBattLevel = 0;
 
+const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
+
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
 
 /******************************************************************************
-readBattery()
+function name : readBattery()
 Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
 ----------------
 Description.: Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
-               note: must bridge zero ohm pads on board to enable voltage divider hardware (see DFR0478 Ver1 schematic)
+               note: must physically bridge zero ohm pads on board to enable voltage divider hardware
+               (see DFR0478 Ver3 schematic)
 
-              if the ESP32-E has calibration eFused those will be used.
+              If the ESP32-E has calibration eFused those will be used.
               In comparison with a regular voltmeter the values of ESP32 and
               multimeter differ only about 0.05V
 Input Value : -
@@ -112,7 +121,7 @@ Return Value: battery voltage in volts
 
 Ref:  ADC1_CHANNEL_0 Enumeration
 https://docs.espressif.com/projects/esp-idf/en/v4.1.1/api-reference/peripherals/adc.html#_CPPv414ADC1_CHANNEL_0)
-******************************************************************************/
+********************************************************************************/
 float readBattery() {
     uint32_t value = 0;
     int rounds = 11;
@@ -149,15 +158,46 @@ float readBattery() {
 
 void setup() {
     Serial.begin(115200);
+
 #ifdef DEBUG
-    Serial.println("Starting BLE work!");
+    Serial.println("Initialising flipTurn device");
 #endif
 
     bleKeyboard.begin();
+
+#ifdef DEBUG
+    if (bleKeyboard.isConnected()) {
+        Serial.println("flipTurn BLE Device is Connected");
+        // bleKeyboard.print("Hello world");
+    }
+#endif
+
+    // initialise button press_type set-up code (pin, pullup mode, callback function)
+    button.begin(SWITCH_PIN);
+
+#ifdef DEBUG_PRESSTYPE  // *****  debug - button press_type function tests *****
+    button.functionTest();
+#endif
 }
 
 void loop() {
-    // loop code here
+    yield();
+    button.update();
+
+    if (button.triggered(SINGLE_TAP)) {
+        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+        bleKeyboard.write(KEY_DOWN_ARROW);
+    }
+
+    if (button.triggered(DOUBLE_TAP)) {
+        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+        bleKeyboard.write(KEY_UP_ARROW);
+    }
+
+    if (button.triggered(LONG_PRESS)) {
+        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+        bleKeyboard.write(KEY_MEDIA_EJECT);
+    }
 
     bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
 }

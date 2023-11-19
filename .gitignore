@@ -60,3 +60,5 @@ lib/myConstants/secrets.h
 # Ignore lock files for libreOffice
 .~lock*
 
+# Ignore uneccessary libs (temporarily using for reference)
+lib/smokerStates/

@@ -1,10 +1,11 @@
 
 /** *************************************************************************************
- *    flipTurn-main.cpp
+ *?    flipTurn-main.cpp
  *
+ *       (note:  comments are formatted with VSCode Better Comments extension)
  **  ---------------------------------------------------------------------------------
- **  flipTurn - ESP-Arduino software to send BLE keyboard pagnation commands to sheet
- **    music Apps like Unreal Book
+ **  flipTurn - ESP-Arduino software to send BLE keyboard pagnation commands to
+ **    sheet music Apps like Unreal Book
  **  Copyright (C) 2022-2023 Carl W Greenstreet
  *
  **  This program is free software; you can redistribute it and/or modify
@@ -22,13 +23,13 @@
  **  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **  ---------------------------------------------------------------------------------
  *
- *    Purpose:  ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
+ *?   Purpose:  ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
  *
  *    Project Repository:  https://github.com/cwgstreet/flipTurn
  *    Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
  *
  *    Code designed to work with the following hardware
- *      DFRobot ESP-32 dfr0478 module
+ *      DFRobot ESP-32 dfr0478 Ver3 module
  *      3.7V LiPo rechargeable battery
  *      microswitches
  *
@@ -67,16 +68,17 @@
  *
  * *************************************************************************************/
 
-/* ******************************************************
+/*
+ * *************************************************************
  *   Pin-out Summaries
- *     Refer to xxxxxx for pin-out table plus also see github flipTurn wiki
- *       for device schematic and breadboard hookup pictures
- * *******************************************************/
+ *     Refer to myConstants.h for pin-out table plus also see github flipTurn
+ *       wiki for device schematic and breadboard hookup pictures
+ * *************************************************************/
 
 // external libraries:
-#include <Arduino.h>  //* IDE requires Arduino framework to be explicitly included
-#include <Bounce2.h>
+#include <Arduino.h>  // IDE requires Arduino framework to be explicitly included
 #include <BleKeyboard.h>
+#include <Bounce2.h>
 
 #include "esp_adc_cal.h"
 
@@ -84,7 +86,7 @@
 // #include "periphials.h"    // serial monitor function tests and usuage routines
 #include "press_type.h"  // wrapper library abstracting Yabl / Bounce2 routines
 
-//? **************  Selective Debug Scaffolding *********************
+//? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
 //   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
@@ -94,22 +96,24 @@
 
 // Li-Po battery management, per Firebeetle-2-ESP32-E motion sensor project (GPL2);
 //   code snippets adapted to Firebeetle DFR0478 (Ver1)
-#define LOW_BATTERY_VOLTAGE 3.20
+#define LOW_BATTERY_VOLTAGE 3.20  // battery protection board should trigger off at this level
 #define VERY_LOW_BATTERY_VOLTAGE 3.10
 #define CRITICALLY_LOW_BATTERY_VOLTAGE 3.00  // battery damage at this level!
 
-int currentBattLevel = 0;
+int currentBattLevel = 99;  // initially set to 99%
 
 const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
 
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
 
-/******************************************************************************
-function name : readBattery()
-Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
+bool hasRun = 0;  // run flag to control single execution in loop
+
+/*****************************************************************************
+    function name : readBattery()
+    Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
 ----------------
-Description.: Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
+Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
                note: must physically bridge zero ohm pads on board to enable voltage divider hardware
                (see DFR0478 Ver3 schematic)
 
@@ -160,17 +164,10 @@ void setup() {
     Serial.begin(115200);
 
 #ifdef DEBUG
-    Serial.println("Initialising flipTurn device");
+    Serial.println("Preparing flipTurn for BLE connection");
 #endif
 
     bleKeyboard.begin();
-
-#ifdef DEBUG
-    if (bleKeyboard.isConnected()) {
-        Serial.println("flipTurn BLE Device is Connected");
-        // bleKeyboard.print("Hello world");
-    }
-#endif
 
     // initialise button press_type set-up code (pin, pullup mode, callback function)
     button.begin(SWITCH_PIN);
@@ -181,23 +178,49 @@ void setup() {
 }
 
 void loop() {
-    yield();
+    yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
+
+#ifdef DEBUG  // connection status
+    if (hasRun) {
+        if (bleKeyboard.isConnected()) {
+            Serial.println("flipTurn BLE Device is now Connected");
+            bleKeyboard.print("flipTurn is connected");
+        }
+        hasRun = 1;  // toggle flag to run only once
+    }
+#endif
+
+    delay(100);  //! trying to avoid BT congestion -  note this is blocking!
 
     if (button.triggered(SINGLE_TAP)) {
         yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        bleKeyboard.write(KEY_DOWN_ARROW);
+        // bleKeyboard.write(KEY_DOWN_ARROW);
+        bleKeyboard.press(KEY_DOWN_ARROW);
+        bleKeyboard.print("Single Tap = Down Arrow");
     }
+
+    // delay(1000);
 
     if (button.triggered(DOUBLE_TAP)) {
         yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        bleKeyboard.write(KEY_UP_ARROW);
+        // bleKeyboard.write(KEY_UP_ARROW);
+        bleKeyboard.press(KEY_UP_ARROW);
+        bleKeyboard.print("Double Tap = Arrow");
     }
+
+    // delay(1000);
 
     if (button.triggered(LONG_PRESS)) {
         yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        bleKeyboard.write(KEY_MEDIA_EJECT);
+        //bleKeyboard.write(KEY_MEDIA_EJECT);
+        bleKeyboard.press(KEY_MEDIA_EJECT);
+        bleKeyboard.print("Long Press = Eject");
     }
+
+    bleKeyboard.releaseAll();
+
+    // delay(1000);
 
     bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
 }

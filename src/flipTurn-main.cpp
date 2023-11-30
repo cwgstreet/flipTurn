@@ -1,8 +1,8 @@
 
-/** *************************************************************************************
+/**
+ ** *************************************************************************************
  *?    flipTurn-main.cpp
- *
- *       (note:  comments are formatted with VSCode Better Comments extension)
+ *       (comments are formatted with VSCode - Better Comments extension)
  **  ---------------------------------------------------------------------------------
  **  flipTurn - ESP-Arduino software to send BLE keyboard pagnation commands to
  **    sheet music Apps like Unreal Book
@@ -23,51 +23,44 @@
  **  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **  ---------------------------------------------------------------------------------
  *
- *?   Purpose:  ESP-Arduino software to send BLE pagnation commands to sheet music Apps like Unreal Book
+ *?   Purpose:  Send BLE pagnation commands to sheet music App Unreal Book
+ *      Project Repository:  https://github.com/cwgstreet/flipTurn
+ *      Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
  *
- *    Project Repository:  https://github.com/cwgstreet/flipTurn
- *    Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
- *
- *    Code designed to work with the following hardware
- *      DFRobot ESP-32 dfr0478 Ver3 module
- *      3.7V LiPo rechargeable battery
- *      microswitches
- *
- *    Credits (3rd Party Libraries, code snippets, etc)
+ *?   Credits (3rd Party Libraries, code snippets, etc)
  *    -------------------------------------------------
  *     This application uses or adapts Open Source components. You can find the source code of their open source projects
  *     along with license information below. We acknowledge and are grateful to these developers for their
  *     contributions to open source.
  *
  **      Project: LOLIN32-BT-Page-Turner
- **      https://github.com/raichea/LOLIN32-BT-Page-Turner
- **      https://www.thingiverse.com/thing:4880077/files
- *       Use: Overall project inspiration
- *       Copyright (c) 2021 raichea
- *       License: CC4.0 International Attribution; Creative Commons - Attribution license
+ **        https://github.com/raichea/LOLIN32-BT-Page-Turner
+ **        https://www.thingiverse.com/thing:4880077/files
+ *         Use: Overall project inspiration
+ *         Copyright (c) 2021 raichea
+ *         License: CC4.0 International Attribution; Creative Commons - Attribution license
  *
  **      Project: Bounce2  https://github.com/thomasfredericks/Bounce2
- *       Use: Debouncing library for Arduino and Wiring
- *       Copyright (c) 2013 thomasfredericks
- *       License (MIT) https://github.com/thomasfredericks/Bounce2/blob/master/LICENSE
+ *         Use: Debouncing library for Arduino and Wiring
+ *         Copyright (c) 2013 thomasfredericks
+ *         License (MIT) https://github.com/thomasfredericks/Bounce2/blob/master/LICENSE
  *
  **      Project: ESP32-BLE-Keyboard  https://github.com/T-vK/ESP32-BLE-Keyboard
- *       Use: BLE Keyboard library for ESP32 devices; used to send pagnation commands to iPad
- *       Copyright (c) 2019 T-vK
- *       License (MIT / GPL3) licence discussion: https://github.com/T-vK/ESP32-BLE-Keyboard/issues/60
- *       Fork used in this project: https://github.com/cwgstreet/ESP32-BLE-Keyboard-with-EJECT
- *       Fork enables KEY_MEDIA_EJECT keypress, necessary to toggle on virtual onscreen keyboard in IOS
+ *         Use: BLE Keyboard library for ESP32 devices; used to send pagnation commands to iPad
+ *         Copyright (c) 2019 T-vK
+ *         License (MIT / GPL3) licence discussion: https://github.com/T-vK/ESP32-BLE-Keyboard/issues/60
+ *         Fork used in this project: https://github.com/cwgstreet/ESP32-BLE-Keyboard-with-EJECT
+ *          Fork enables KEY_MEDIA_EJECT keypress, necessary to toggle on virtual onscreen keyboard in IOS
  *
  **      Project: Firebeetle-2-ESP32-E motion sensor https://github.com/Torxgewinde/Firebeetle-2-ESP32-E
- *       Incorporated / adapted code snippets on measuring and managing LiPo battery voltage with ESP-32
- *       Copyright (C) 2021 Tom Stöveken
- *       License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
+ *         Incorporated / adapted code snippets on measuring and managing LiPo battery voltage with ESP-32
+ *         Copyright (C) 2021 Tom Stöveken
+ *         License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
  *
- *    Revisions:
- *      2022.10.31   Ver1 - under development
+ *?    Revisions:
+ *       2023.11.27   Ver1 - under development
  *
- * *************************************************************************************/
-
+ ** *************************************************************************************/
 /*
  * *************************************************************
  *   Pin-out Summaries
@@ -155,8 +148,7 @@ float readBattery() {
     }
     value /= (uint32_t)rounds;
 
-    // due to the voltage divider (1M+1M) values must be multiplied by 2
-    // and convert mV to V
+    // due to the voltage divider (1M+1M), multiply value by 2 and convert mV to V
     return esp_adc_cal_raw_to_voltage(value, &adc_chars) * 2.0 / 1000.0;
 }
 
@@ -173,7 +165,7 @@ void setup() {
     button.begin(SWITCH_PIN);
 
 #ifdef DEBUG_PRESSTYPE  // *****  debug - button press_type function tests *****
-    button.functionTest();
+    //button.functionTest();
 #endif
 }
 
@@ -181,46 +173,42 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
-#ifdef DEBUG  // connection status
-    if (hasRun) {
-        if (bleKeyboard.isConnected()) {
-            Serial.println("flipTurn BLE Device is now Connected");
-            bleKeyboard.print("flipTurn is connected");
+ /*   if (bleKeyboard.isConnected()) {
+        if (hasRun = 0) {
+            Serial.println("flipTurn BLE Device now connected!");
+            // bleKeyboard.print("flipTurn is connected");
+            hasRun = 1;  // toggle flag to run notifications only once
         }
-        hasRun = 1;  // toggle flag to run only once
-    }
-#endif
 
-    delay(100);  //! trying to avoid BT congestion -  note this is blocking!
+        delay(100);  //! trying to avoid BT congestion - note this is blocking!
 
-    if (button.triggered(SINGLE_TAP)) {
-        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        // bleKeyboard.write(KEY_DOWN_ARROW);
-        bleKeyboard.press(KEY_DOWN_ARROW);
-        bleKeyboard.print("Single Tap = Down Arrow");
-    }
 
-    // delay(1000);
+        if (button.triggered(SINGLE_TAP)) {
+            yield();  // Do (almost) nothing - yield allows ESP8266 background functions
+            // bleKeyboard.write(KEY_DOWN_ARROW);
+            bleKeyboard.write(KEY_DOWN_ARROW);
+            Serial.println("Single Tap = Down Arrow");
+        }
+        // delay(1000);
 
-    if (button.triggered(DOUBLE_TAP)) {
-        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        // bleKeyboard.write(KEY_UP_ARROW);
-        bleKeyboard.press(KEY_UP_ARROW);
-        bleKeyboard.print("Double Tap = Arrow");
-    }
+        if (button.triggered(DOUBLE_TAP)) {
+            yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+            // bleKeyboard.write(KEY_UP_ARROW);
+            bleKeyboard.write(KEY_UP_ARROW);
+            Serial.println("Double Tap = Up Arrow");
+        }
+        // delay(1000);
 
-    // delay(1000);
+        if (button.triggered(LONG_PRESS)) {
+            yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+            bleKeyboard.write(KEY_MEDIA_EJECT);
+            // bleKeyboard.press(KEY_MEDIA_EJECT);
+            Serial.println("Long Press = Eject");
+        }
+        // delay(1000);
 
-    if (button.triggered(LONG_PRESS)) {
-        yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-        //bleKeyboard.write(KEY_MEDIA_EJECT);
-        bleKeyboard.press(KEY_MEDIA_EJECT);
-        bleKeyboard.print("Long Press = Eject");
-    }
+        bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
+  }  
+ */ // end if ( bleKeyboard.isConnected() )
 
-    bleKeyboard.releaseAll();
-
-    // delay(1000);
-
-    bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
-}
+}  // end loop

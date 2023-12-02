@@ -2,7 +2,7 @@
 /**
  ** *************************************************************************************
  *?    flipTurn-main.cpp
- *       (comments are formatted with VSCode - Better Comments extension)
+ *       (comments are formatted with VSCode Better Comments extension)
  **  ---------------------------------------------------------------------------------
  **  flipTurn - ESP-Arduino software to send BLE keyboard pagnation commands to
  **    sheet music Apps like Unreal Book
@@ -26,6 +26,8 @@
  *?   Purpose:  Send BLE pagnation commands to sheet music App Unreal Book
  *      Project Repository:  https://github.com/cwgstreet/flipTurn
  *      Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
+ *
+ *?   Pin-out Summary: Refer to myConstants.h for pin-out table plus also see github flipTurn wiki
  *
  *?   Credits (3rd Party Libraries, code snippets, etc)
  *    -------------------------------------------------
@@ -58,15 +60,9 @@
  *         License (GPL2): https://github.com/Torxgewinde/Firebeetle-2-ESP32-E/blob/main/LICENSE
  *
  *?    Revisions:
- *       2023.11.27   Ver1 - under development
+ *       2023.11.27   Ver1 - code under development
  *
  ** *************************************************************************************/
-/*
- * *************************************************************
- *   Pin-out Summaries
- *     Refer to myConstants.h for pin-out table plus also see github flipTurn
- *       wiki for device schematic and breadboard hookup pictures
- * *************************************************************/
 
 // external libraries:
 #include <Arduino.h>  // IDE requires Arduino framework to be explicitly included
@@ -76,8 +72,8 @@
 #include "esp_adc_cal.h"
 
 // internal (user) libraries:
-// #include "periphials.h"    // serial monitor function tests and usuage routines
 #include "press_type.h"  // wrapper library abstracting Yabl / Bounce2 routines
+// #include "myConstants.h"  // all constants in one file
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
@@ -110,9 +106,8 @@ Description : Reads the battery voltage through the voltage divider at AO pin (F
                note: must physically bridge zero ohm pads on board to enable voltage divider hardware
                (see DFR0478 Ver3 schematic)
 
-              If the ESP32-E has calibration eFused those will be used.
-              In comparison with a regular voltmeter the values of ESP32 and
-              multimeter differ only about 0.05V
+                If the ESP32-E has calibration eFused, those will be used.
+                In comparison with a regular voltmeter, ESP32 and multimeter values differ only ~0.05V
 Input Value : -
 Return Value: battery voltage in volts
 
@@ -135,11 +130,11 @@ float readBattery() {
             break;
         case ESP_ADC_CAL_VAL_EFUSE_VREF:
 #ifdef DEBUG
-            Serial.printf("Characterized using eFuse Vref (%d mV)\r\n", adc_chars.vref);
+            Serial.printf("Characterised using eFuse Vref (%d mV)\r\n", adc_chars.vref);
 #endif
             break;
         default:
-            Serial.printf("Characterized using Default Vref (%d mV)\r\n", 1100);
+            Serial.printf("Characterised using Default Vref (%d mV)\r\n", 1100);
     }
 
     // to avoid noise, sample the pin several times and average the result
@@ -151,6 +146,7 @@ float readBattery() {
     // due to the voltage divider (1M+1M), multiply value by 2 and convert mV to V
     return esp_adc_cal_raw_to_voltage(value, &adc_chars) * 2.0 / 1000.0;
 }
+/* ************* end readBattery() **********************************************/
 
 void setup() {
     Serial.begin(115200);
@@ -161,13 +157,13 @@ void setup() {
 
     bleKeyboard.begin();
 
-    // initialise button press_type set-up code (pin, pullup mode, callback function)
+    // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
     button.begin(SWITCH_PIN);
 
 #ifdef DEBUG_PRESSTYPE  // *****  debug - button press_type function tests *****
     // button.functionTest();
 #endif
-}
+} // end setup
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
@@ -176,39 +172,34 @@ void loop() {
     if (bleKeyboard.isConnected()) {
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
-            // bleKeyboard.print("flipTurn is connected");
-            delay(100);  //! trying to avoid BT congestion - note this is blocking!
-            hasRun = 1;  // toggle flag to run notifications only once
+            // delay(100);  //! trying to avoid BT congestion - note this is blocking!
+            hasRun = 1;  // toggle flag to run connection notification only once
         }
+
+        //! warning: delay is blocking!
+        //!   necessary to avoid bluetooth overflow errors but must keep short or interferes with button presses
+        delay(10);  // value optimised through trial & error
 
         if (button.triggered(SINGLE_TAP)) {
             yield();  // Do (almost) nothing - yield allows ESP8266 background functions
-            // bleKeyboard.write(KEY_DOWN_ARROW);
             bleKeyboard.write(KEY_DOWN_ARROW);
             Serial.println("Single Tap = Down Arrow");
         }
 
-        //! Delay is blocking! Required to avoid bluetooth overflow but must keep short
-        //!   or interferes with button presses.  Optimised through trial & error
-        delay(50);
-
         if (button.triggered(DOUBLE_TAP)) {
             yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-            // bleKeyboard.write(KEY_UP_ARROW);
             bleKeyboard.write(KEY_UP_ARROW);
             Serial.println("Double Tap = Up Arrow");
         }
-        // delay(1000);
 
         if (button.triggered(LONG_PRESS)) {
-            yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-            bleKeyboard.write(KEY_MEDIA_EJECT);
-            // bleKeyboard.press(KEY_MEDIA_EJECT);
+            yield();                             // Do (almost) nothing -- yield allows ESP8266 background functions
+            bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
             Serial.println("Long Press = Eject");
         }
-        // delay(1000);
 
         bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
-    }                                                   // end if ( bleKeyboard.isConnected() )
+
+    }  // end if ( bleKeyboard.isConnected() )
 
 }  // end loop

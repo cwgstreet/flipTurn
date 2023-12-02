@@ -23,7 +23,10 @@
 
 #include "myConstants.h"  // all constants in one file
 
+//const long BAUD_RATE = 115200;  // match native ESP8266 bootup baud rate to view bootup info, otherwise gibberish
 const long BAUD_RATE = 115200;  // match native ESP8266 bootup baud rate to view bootup info, otherwise gibberish
+
+
 
 Press_Type button(SWITCH_PIN);  // instantiate button object from press_type (YABL child) library
 

@@ -165,7 +165,7 @@ void setup() {
     button.begin(SWITCH_PIN);
 
 #ifdef DEBUG_PRESSTYPE  // *****  debug - button press_type function tests *****
-    //button.functionTest();
+    // button.functionTest();
 #endif
 }
 
@@ -173,15 +173,13 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
- /*   if (bleKeyboard.isConnected()) {
+    if (bleKeyboard.isConnected()) {
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
             // bleKeyboard.print("flipTurn is connected");
+            delay(100);  //! trying to avoid BT congestion - note this is blocking!
             hasRun = 1;  // toggle flag to run notifications only once
         }
-
-        delay(100);  //! trying to avoid BT congestion - note this is blocking!
-
 
         if (button.triggered(SINGLE_TAP)) {
             yield();  // Do (almost) nothing - yield allows ESP8266 background functions
@@ -189,7 +187,10 @@ void loop() {
             bleKeyboard.write(KEY_DOWN_ARROW);
             Serial.println("Single Tap = Down Arrow");
         }
-        // delay(1000);
+
+        //! Delay is blocking! Required to avoid bluetooth overflow but must keep short
+        //!   or interferes with button presses.  Optimised through trial & error
+        delay(50);
 
         if (button.triggered(DOUBLE_TAP)) {
             yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
@@ -208,7 +209,6 @@ void loop() {
         // delay(1000);
 
         bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
-  }  
- */ // end if ( bleKeyboard.isConnected() )
+    }                                                   // end if ( bleKeyboard.isConnected() )
 
 }  // end loop

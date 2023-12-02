@@ -190,11 +190,10 @@ void loop() {
     if (bleKeyboard.isConnected()) {
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
-            // delay(100);  //! trying to avoid BT congestion - note this is blocking!
             hasRun = 1;  // toggle flag to run connection notification only once
         }
 
-        //! warning: delay is blocking!
+        //! warning: following delay() is blocking!
         //!   necessary to avoid bluetooth overflow errors but must keep short or interferes with button presses
         delay(10);  // value optimised through trial & error
 

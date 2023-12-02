@@ -34,8 +34,6 @@ enum pressType_T { NO_PRESS,
 // pressEventCode_T defined in implementation file, press_type.cpp, hence extern keyword
 extern pressType_T pressEventCode;
 
-extern const int SWITCH_PIN;
-
 // Press_Type class - wrapper class to determine press type; inherited from Yabl::Button class
 class Press_Type : public Button {
    public:

@@ -73,7 +73,7 @@
 
 // internal (user) libraries:
 #include "press_type.h"  // wrapper library abstracting Yabl / Bounce2 routines
-// #include "myConstants.h"  // all constants in one file
+#include "myConstants.h"  // all constants in one file
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
@@ -160,9 +160,11 @@ void setup() {
     // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
     button.begin(SWITCH_PIN);
 
-#ifdef DEBUG_PRESSTYPE  // *****  debug - button press_type function tests *****
-    // button.functionTest();
-#endif
+  pinMode(RED_LED_PIN,   OUTPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(BLUE_LED_PIN,  OUTPUT);
+
+
 } // end setup
 
 void loop() {

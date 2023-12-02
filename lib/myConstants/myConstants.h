@@ -71,6 +71,10 @@
 constexpr int BATT_PIN = A0;     // Read battery voltage (must bridge Rx and Ry zero ohm resistor pads on Firebeetle voltage divider)
 constexpr int SWITCH_PIN = D6;   // microswitch (wired NO; need to enable internal pullup)
 
+// RGB pwm pin assignments
+constexpr int RED_LED_PIN = 1;
+constexpr int GREEN_LED_PIN = 3;
+constexpr int BLUE_LED_PIN = 4;
 
 
 // ---------------------------------------------------------
@@ -88,7 +92,6 @@ constexpr int SERIAL_MONITOR_SPEED = 115200;
 // *******************************************************
 //   Other constants
 // *******************************************************
-
 
 
 

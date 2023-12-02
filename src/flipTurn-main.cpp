@@ -72,8 +72,8 @@
 #include "esp_adc_cal.h"
 
 // internal (user) libraries:
-#include "press_type.h"  // wrapper library abstracting Yabl / Bounce2 routines
 #include "myConstants.h"  // all constants in one file
+#include "press_type.h"   // wrapper library abstracting Yabl / Bounce2 routines
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
@@ -101,7 +101,7 @@ bool hasRun = 0;  // run flag to control single execution in loop
 /*****************************************************************************
     function name : readBattery()
     Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
-----------------
+------------------------
 Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
                note: must physically bridge zero ohm pads on board to enable voltage divider hardware
                (see DFR0478 Ver3 schematic)
@@ -148,6 +148,22 @@ float readBattery() {
 }
 /* ************* end readBattery() **********************************************/
 
+/*****************************************************************************
+    function name : setRGBcolour()
+------------------------
+Description : sets a defined colour on RGB LED by setting R, G and B values in an array
+
+Input Value : R, G and B values for a specific colour output
+                see https://www.w3schools.com/colors/colors_picker.asp
+Return Value: - n/a -
+********************************************************************************/
+void setRGBcolour(int r, int g, int b) {
+    analogWrite(RED_LED_PIN, r);
+    analogWrite(GREEN_LED_PIN, g);
+    analogWrite(BLUE_LED_PIN, b);
+}
+/* ************* end setRGBcolour() **********************************************/
+
 void setup() {
     Serial.begin(115200);
 
@@ -160,12 +176,12 @@ void setup() {
     // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
     button.begin(SWITCH_PIN);
 
-  pinMode(RED_LED_PIN,   OUTPUT);
-  pinMode(GREEN_LED_PIN, OUTPUT);
-  pinMode(BLUE_LED_PIN,  OUTPUT);
+    // set-up RGB LED
+    pinMode(RED_LED_PIN, OUTPUT);
+    pinMode(GREEN_LED_PIN, OUTPUT);
+    pinMode(BLUE_LED_PIN, OUTPUT);
 
-
-} // end setup
+}  // end setup
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset

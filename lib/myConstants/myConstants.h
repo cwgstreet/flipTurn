@@ -72,9 +72,9 @@ constexpr int BATT_PIN = A0;     // Read battery voltage (must bridge Rx and Ry 
 constexpr int SWITCH_PIN = D6;   // microswitch (wired NO; need to enable internal pullup)
 
 // RGB pwm pin assignments
-constexpr int RED_LED_PIN = 1;
-constexpr int GREEN_LED_PIN = 3;
-constexpr int BLUE_LED_PIN = 4;
+constexpr int RED_LED_PIN = D2;
+constexpr int GREEN_LED_PIN = D3;
+constexpr int BLUE_LED_PIN = D4;
 
 
 // ---------------------------------------------------------

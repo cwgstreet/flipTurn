@@ -148,6 +148,14 @@ float readBattery() {
 }
 /* ************* end readBattery() **********************************************/
 
+/* define RGB values for LED status colours
+int BLUE_BT_CONNECTED[] = {0, 0, 255};
+int GREEN_FULLY_CHARGED[] = {0, 255, 0};
+int YELLOW_LOW_BATT[] = {255, 255, 0};
+int RED_CRITICALLY_low_BAT[] = {255, 0, 0};
+
+int *status_colour_set[] = {BLUE_BT_CONNECTED, GREEN_FULLY_CHARGED, YELLOW_LOW_BATT, RED_CRITICALLY_low_BAT};  // array of pointers
+*/
 /*****************************************************************************
     function name : setRGBcolour()
 ------------------------
@@ -188,6 +196,17 @@ void loop() {
     button.update();
 
     if (bleKeyboard.isConnected()) {
+        
+        //test LED colours 
+        setRGBcolour(0, 0, 255);  // blue led to indicate active BT connection
+        delay(1000);
+        setRGBcolour(0, 255, 0);  // green led 
+        delay(1000);
+        setRGBcolour(255, 0, 255);  // magenta 
+        delay(1000);
+        setRGBcolour(255, 0, 0);  // red 
+        delay(1000);
+
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
             hasRun = 1;  // toggle flag to run connection notification only once

@@ -30,14 +30,19 @@ void setRGBcolour(int r, int g, int b) {
 */
 
 struct StatusColour {
-// add members
-  int red;
-  int green;
-  int blue
+// add members with default while rgb {255,255,255}
+  int red{255};
+  int green{255};
+  int blue{255};
  };
 
-void setRGBcolour(struct StatusColour & statusColour) {
+StatusColour blueBTconnected {0, 0, 255};
+StatusColour greenFullBattChg {0, 255, 0};
+StatusColour magentaLowBattChg {255, 0, 255};
+StatusColour redCriticalLowBatt {255, 0, 0};
+
+void setRGBcolour(StatusColour & statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);
-
+}

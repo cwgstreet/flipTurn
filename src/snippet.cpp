@@ -31,5 +31,13 @@ void setRGBcolour(int r, int g, int b) {
 
 struct StatusColour {
 // add members
+  int red;
+  int green;
+  int blue
+ };
 
-};
+void setRGBcolour(struct StatusColour & statusColour) {
+    analogWrite(RED_LED_PIN, statusColour.red);
+    analogWrite(GREEN_LED_PIN, statusColour.green);
+    analogWrite(BLUE_LED_PIN, statusColour.blue);
+

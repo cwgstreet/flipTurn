@@ -41,7 +41,8 @@ StatusColour greenFullBattChg {0, 255, 0};
 StatusColour magentaLowBattChg {255, 0, 255};
 StatusColour redCriticalLowBatt {255, 0, 0};
 
-void setRGBcolour(StatusColour & statusColour) {
+// const pass by ref avoids making copies
+void setRGBcolour(const StatusColour & statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);

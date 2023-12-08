@@ -163,9 +163,9 @@ bool isBatteryLow(uint32_t esp_adc_cal_raw_to_voltage) {
 }
 */
 
+//  Ref: https://www.w3schools.com/colors/colors_picker.asp
 struct StatusColour {
-    // rgb values, permissible values 0 - 255.  Ref: https://www.w3schools.com/colors/colors_picker.asp
-    int red, green, blue;
+    int red, green, blue;  //rgb values, permissible values 0 - 255. 
 };
 
 // pre-define status notification colours
@@ -213,13 +213,13 @@ void loop() {
 
 #ifdef DEBUG
     // test LED colours
-    SetRgbColour(blue_BT_connected);  
+    SetRgbColour(blue_BT_connected);
     delay(1000);
-    SetRgbColour(green_fully_charged_battery);  
+    SetRgbColour(green_fully_charged_battery);
     delay(1000);
-    SetRgbColour(magenta_low_battery);  
+    SetRgbColour(magenta_low_battery);
     delay(1000);
-    SetRgbColour(red_critically_low_battery);  
+    SetRgbColour(red_critically_low_battery);
     delay(1000);
 #endif
 
@@ -249,7 +249,7 @@ void loop() {
         if (button.triggered(LONG_PRESS)) {
             yield();                             // Do (almost) nothing -- yield allows ESP8266 background functions
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
-            Serial.println("Long Press = Eject");
+            Serial.println("Long Press = Eject / show Battery Status Colour");
         }
 
         bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level

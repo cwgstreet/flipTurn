@@ -164,13 +164,12 @@ bool isBatteryLow(uint32_t esp_adc_cal_raw_to_voltage) {
 */
 
 struct StatusColour {
-    // rgb values, 0 - 255
-    int red;
-    int green;
-    int blue;
+    // rgb values, permissible values 0 - 255 
+    int red, green, blue;
 };
 
-StatusColour blue_BT_Connected{0, 0, 255};
+// pre-define status notification colours
+StatusColour blue_BT_connected{0, 0, 255};
 StatusColour green_fully_charged_battery{0, 255, 0};
 StatusColour magenta_low_battery{255, 255, 0};
 StatusColour red_critically_low_battery{255, 0, 0};
@@ -214,7 +213,7 @@ void loop() {
 
 #ifdef DEBUG
     // test LED colours
-    SetRgbColour(blue_BT_Connected);  
+    SetRgbColour(blue_BT_connected);  
     delay(1000);
     SetRgbColour(green_fully_charged_battery);  
     delay(1000);
@@ -225,7 +224,7 @@ void loop() {
 #endif
 
     if (bleKeyboard.isConnected()) {
-        SetRgbColour(blue_BT_Connected);
+        SetRgbColour(blue_BT_connected);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

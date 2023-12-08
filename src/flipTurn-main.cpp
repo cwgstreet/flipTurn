@@ -31,7 +31,7 @@
  *
  *?   Credits (3rd Party Libraries, code snippets, etc)
  *    -------------------------------------------------
- *     This application uses or adapts Open Source components. You can find the source code of their open source projects
+ *     This application uses or adapts Open Source code. You can find the source code of their open source projects
  *     along with license information below. We acknowledge and are grateful to these developers for their
  *     contributions to open source.
  *
@@ -72,11 +72,11 @@
 #include "esp_adc_cal.h"
 
 // internal (user) libraries:
-#include "myConstants.h"  // all constants in one file
-#include "press_type.h"   // wrapper library abstracting Yabl / Bounce2 routines
+#include "myConstants.h"  // all constants in one file + pinout table
+#include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
 
 //? ************** Selective Debug Scaffolding *********************
-// Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-proccessor stage
+// Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-processor stage
 //   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
 //? *****************************************************************
@@ -89,24 +89,24 @@
 #define VERY_LOW_BATTERY_VOLTAGE 3.10
 #define CRITICALLY_LOW_BATTERY_VOLTAGE 3.00  // battery damage at this level!
 
-int currentBattLevel = 100;  // initially set to 100%
+int currentBattLevel = 100;  // initially set to fully charged, 100%
 
-const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
+const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
 
-bool hasRun = 0;  // run flag to control single execution in loop
+bool hasRun = 0;  // run flag to control single execution within loop
 
 /*****************************************************************************
 Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32, DFR0478)
                note: must solder bridge zero-ohm pads to enable voltage divider hardware (ref DFR0478 Ver3 schematic)
 
-              If the ESP32-E has calibration eFused, those will be used.
-              In comparison with a regular voltmeter, ESP32 and multimeter values differ only ~0.05V
+              If the ESP32-E has calibration eFused, these will be used.
+              In comparison with a regular voltmeter, ESP32 vs. multimeter values differ only ~0.05V
 Input Value : -
 Return Value: battery voltage in volts
-
+---------------------------------
 Ref:  ADC1_CHANNEL_0 Enumeration
 https://docs.espressif.com/projects/esp-idf/en/v4.1.1/api-reference/peripherals/adc.html#_CPPv414ADC1_CHANNEL_0)
 ********************************************************************************/
@@ -182,7 +182,7 @@ Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp
 Return Value: - n/a -
 ********************************************************************************/
-void SetRgbColour(const StatusColour& statusColour) {
+void setRgbColour(const StatusColour& statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);
@@ -213,18 +213,18 @@ void loop() {
 
 #ifdef DEBUG
     // test LED colours
-    SetRgbColour(blue_BT_connected);
+    setRgbColour(blue_BT_connected);
     delay(1000);
-    SetRgbColour(green_fully_charged_battery);
+    setRgbColour(green_fully_charged_battery);
     delay(1000);
-    SetRgbColour(magenta_low_battery);
+    setRgbColour(magenta_low_battery);
     delay(1000);
-    SetRgbColour(red_critically_low_battery);
+    setRgbColour(red_critically_low_battery);
     delay(1000);
 #endif
 
     if (bleKeyboard.isConnected()) {
-        SetRgbColour(blue_BT_connected);
+        setRgbColour(blue_BT_connected);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

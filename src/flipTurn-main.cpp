@@ -149,22 +149,22 @@ float readBattery() {
 /* ************* end readBattery() **********************************************/
 
 struct StatusColour {
-    int red = {};
-    int green = {};
-    int blue = {};
+    // rgb values, 0 - 255
+    int red;
+    int green;
+    int blue;
 };
 
-StatusColour blue_BT_Connected {0, 0, 255};
-//int GREEN_FULLY_CHARGED[] = {0, 255, 0};
-//int MAGENTA_LOW_BATT[] = {255, 255, 0};
-//int RED_CRITICALLY_low_BAT[] = {255, 0, 0};
-
-//int *status_colour_set[] = {BLUE_BT_CONNECTED, GREEN_FULLY_CHARGED, MAGENTA_LOW_BATT, RED_CRITICALLY_low_BAT};  // array of pointers
+StatusColour blue_BT_Connected{0, 0, 255};
+StatusColour green_fully_charged_battery{0, 255, 0};
+StatusColour magenta_low_battery{255, 255, 0};
+StatusColour red_critically_low_battery{255, 0, 0};
 
 /*****************************************************************************
     function name : setRGBcolour()
 ------------------------
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
+               const pass by ref avoided inefficient copying yet prevents any changes to underlying struct
 
 Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp

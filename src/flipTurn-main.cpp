@@ -148,14 +148,19 @@ float readBattery() {
 }
 /* ************* end readBattery() **********************************************/
 
-/* define RGB values for LED status colours
-int BLUE_BT_CONNECTED[] = {0, 0, 255};
-int GREEN_FULLY_CHARGED[] = {0, 255, 0};
-int YELLOW_LOW_BATT[] = {255, 255, 0};
-int RED_CRITICALLY_low_BAT[] = {255, 0, 0};
+struct StatusColour {
+    int red = {};
+    int green = {};
+    int blue = {};
+};
 
-int *status_colour_set[] = {BLUE_BT_CONNECTED, GREEN_FULLY_CHARGED, YELLOW_LOW_BATT, RED_CRITICALLY_low_BAT};  // array of pointers
-*/
+StatusColour blue_BT_Connected {0, 0, 255};
+//int GREEN_FULLY_CHARGED[] = {0, 255, 0};
+//int MAGENTA_LOW_BATT[] = {255, 255, 0};
+//int RED_CRITICALLY_low_BAT[] = {255, 0, 0};
+
+//int *status_colour_set[] = {BLUE_BT_CONNECTED, GREEN_FULLY_CHARGED, MAGENTA_LOW_BATT, RED_CRITICALLY_low_BAT};  // array of pointers
+
 /*****************************************************************************
     function name : setRGBcolour()
 ------------------------
@@ -165,11 +170,17 @@ Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp
 Return Value: - n/a -
 ********************************************************************************/
+void setRGBcolour(const StatusColour& statusColour) {
+    analogWrite(RED_LED_PIN, statusColour.red);
+    analogWrite(GREEN_LED_PIN, statusColour.green);
+    analogWrite(BLUE_LED_PIN, statusColour.blue);
+}
+/*
 void setRGBcolour(int r, int g, int b) {
     analogWrite(RED_LED_PIN, r);
     analogWrite(GREEN_LED_PIN, g);
     analogWrite(BLUE_LED_PIN, b);
-}
+} */
 /* ************* end setRGBcolour() **********************************************/
 
 void setup() {
@@ -196,16 +207,19 @@ void loop() {
     button.update();
 
     if (bleKeyboard.isConnected()) {
-        
-        //test LED colours 
+        // test LED colours
+        /*
         setRGBcolour(0, 0, 255);  // blue led to indicate active BT connection
         delay(1000);
-        setRGBcolour(0, 255, 0);  // green led 
+        setRGBcolour(0, 255, 0);  // green led
         delay(1000);
-        setRGBcolour(255, 0, 255);  // magenta 
+        setRGBcolour(255, 0, 255);  // magenta
         delay(1000);
-        setRGBcolour(255, 0, 0);  // red 
+        setRGBcolour(255, 0, 0);  // red
         delay(1000);
+        */
+
+        setRGBcolour(blue_BT_Connected);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

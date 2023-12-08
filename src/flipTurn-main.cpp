@@ -164,7 +164,7 @@ bool isBatteryLow(uint32_t esp_adc_cal_raw_to_voltage) {
 */
 
 struct StatusColour {
-    // rgb values, permissible values 0 - 255 
+    // rgb values, permissible values 0 - 255.  Ref: https://www.w3schools.com/colors/colors_picker.asp
     int red, green, blue;
 };
 

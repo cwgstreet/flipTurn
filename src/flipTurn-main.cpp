@@ -26,6 +26,12 @@
  *?   Purpose:  Send BLE pagnation commands to sheet music App Unreal Book
  *      Project Repository:  https://github.com/cwgstreet/flipTurn
  *      Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
+ * 
+ * *  flipTurn foot-switch operation:  
+ * *     1) Short Press - Page Down
+ * *     2) Double Press - Page Up  
+ * *     3) Press Hold (long Press):  trigger onscreen virtual keyboard in IOS, and 
+ * *         show battery charge status colour (green = fully charged, magenta = low charge, red = critically low charge)
  *
  *?   Pin-out Summary: Refer to myConstants.h for pin-out table plus also see github flipTurn wiki
  *

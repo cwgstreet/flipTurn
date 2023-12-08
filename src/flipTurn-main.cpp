@@ -89,7 +89,7 @@
 #define VERY_LOW_BATTERY_VOLTAGE 3.10
 #define CRITICALLY_LOW_BATTERY_VOLTAGE 3.00  // battery damage at this level!
 
-int currentBattLevel = 99;  // initially set to 99%
+int currentBattLevel = 100;  // initially set to 100%
 
 const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
 
@@ -99,15 +99,11 @@ BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
 bool hasRun = 0;  // run flag to control single execution in loop
 
 /*****************************************************************************
-    function name : readBattery()
-    Code adapted from Firebeetle-2-ESP32-E motion sensor project (changes made)
-------------------------
-Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32 Ver4)
-               note: must physically bridge zero ohm pads on board to enable voltage divider hardware
-               (see DFR0478 Ver3 schematic)
+Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32, DFR0478)
+               note: must solder bridge zero-ohm pads to enable voltage divider hardware (ref DFR0478 Ver3 schematic)
 
-                If the ESP32-E has calibration eFused, those will be used.
-                In comparison with a regular voltmeter, ESP32 and multimeter values differ only ~0.05V
+              If the ESP32-E has calibration eFused, those will be used.
+              In comparison with a regular voltmeter, ESP32 and multimeter values differ only ~0.05V
 Input Value : -
 Return Value: battery voltage in volts
 
@@ -146,7 +142,26 @@ float readBattery() {
     // due to the voltage divider (1M+1M), multiply value by 2 and convert mV to V
     return esp_adc_cal_raw_to_voltage(value, &adc_chars) * 2.0 / 1000.0;
 }
-/* ************* end readBattery() **********************************************/
+
+/*****************************************************************************
+Description : Tests whether battery charge is below  low voltage threshold
+
+Input Value :
+Return Value: true
+*******************************************************************************
+bool isBatteryLow(uint32_t esp_adc_cal_raw_to_voltage) {
+    static unsigned long updateTimer = 0;
+
+    if (millis() - updateTimer > 1000) {
+        bleKeyboard.setBatteryLevel(batteryAvg >= HI_VOLTAGE ? 100 : 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
+        delay(BLE_DELAY);
+        // Serial.printf("Battery: %d%%\n", 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
+        updateTimer = millis();
+    }
+
+    return batteryAvg <= LOW_VOLTAGE ? true : false;
+}
+*/
 
 struct StatusColour {
     // rgb values, 0 - 255
@@ -161,27 +176,18 @@ StatusColour magenta_low_battery{255, 255, 0};
 StatusColour red_critically_low_battery{255, 0, 0};
 
 /*****************************************************************************
-    function name : setRGBcolour()
-------------------------
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
-               const pass by ref avoided inefficient copying yet prevents any changes to underlying struct
+               const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
 
 Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp
 Return Value: - n/a -
 ********************************************************************************/
-void setRGBcolour(const StatusColour& statusColour) {
+void SetRgbColour(const StatusColour& statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);
 }
-/*
-void setRGBcolour(int r, int g, int b) {
-    analogWrite(RED_LED_PIN, r);
-    analogWrite(GREEN_LED_PIN, g);
-    analogWrite(BLUE_LED_PIN, b);
-} */
-/* ************* end setRGBcolour() **********************************************/
 
 void setup() {
     Serial.begin(115200);
@@ -206,29 +212,28 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
-    if (bleKeyboard.isConnected()) {
-        // test LED colours
-        /*
-        setRGBcolour(0, 0, 255);  // blue led to indicate active BT connection
-        delay(1000);
-        setRGBcolour(0, 255, 0);  // green led
-        delay(1000);
-        setRGBcolour(255, 0, 255);  // magenta
-        delay(1000);
-        setRGBcolour(255, 0, 0);  // red
-        delay(1000);
-        */
+#ifdef DEBUG
+    // test LED colours
+    SetRgbColour(blue_BT_Connected);  
+    delay(1000);
+    SetRgbColour(green_fully_charged_battery);  
+    delay(1000);
+    SetRgbColour(magenta_low_battery);  
+    delay(1000);
+    SetRgbColour(red_critically_low_battery);  
+    delay(1000);
+#endif
 
-        setRGBcolour(blue_BT_Connected);
+    if (bleKeyboard.isConnected()) {
+        SetRgbColour(blue_BT_Connected);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
             hasRun = 1;  // toggle flag to run connection notification only once
         }
 
-        //! warning: following delay() is blocking!
-        //!   necessary to avoid bluetooth overflow errors but must keep short or interferes with button presses
-        delay(10);  // value optimised through trial & error
+        //! warning: following delay() is blocking but necessary to avoid BT overflow errors - keep short or interferes with button presses
+        delay(10);  // value optimised through trial & error where no delay gives BT overflow errors
 
         if (button.triggered(SINGLE_TAP)) {
             yield();  // Do (almost) nothing - yield allows ESP8266 background functions

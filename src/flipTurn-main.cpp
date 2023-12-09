@@ -26,11 +26,11 @@
  *?   Purpose:  Send BLE pagnation commands to sheet music App Unreal Book
  *      Project Repository:  https://github.com/cwgstreet/flipTurn
  *      Project Wiki:        https://github.com/cwgstreet/flipTurn/wiki
- * 
- * *  flipTurn foot-switch operation:  
+ *
+ * *  flipTurn foot-switch operation:
  * *     1) Short Press - Page Down
- * *     2) Double Press - Page Up  
- * *     3) Press Hold (long Press):  trigger onscreen virtual keyboard in IOS, and 
+ * *     2) Double Press - Page Up
+ * *     3) Press Hold (long Press):  trigger onscreen virtual keyboard in IOS, and
  * *         show battery charge status colour (green = fully charged, magenta = low charge, red = critically low charge)
  *
  *?   Pin-out Summary: Refer to myConstants.h for pin-out table plus also see github flipTurn wiki
@@ -89,26 +89,24 @@
 #define DEBUG 1  // uncomment to debug
 //? ************ end Selective Debug Scaffolding ********************
 
-// Li-Po battery management, per Firebeetle-2-ESP32-E motion sensor project (GPL2);
-//   code snippets adapted to Firebeetle DFR0478 (Ver1)
-#define LOW_BATTERY_VOLTAGE 3.20  // battery protection board should trigger off at this level
-#define VERY_LOW_BATTERY_VOLTAGE 3.10
-#define CRITICALLY_LOW_BATTERY_VOLTAGE 3.00  // battery damage at this level!
+//   battery operating ranges
+#define HIGH_BATTERY_VOLTAGE 3.70  // 4.2 - 3.7V battery "fully" charged
+#define LOW_BATTERY_VOLTAGE 3.00   // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
 
-int currentBattLevel = 100;  // initially set to fully charged, 100%
+int current_battery_level = 100;  // initially set to fully charged, 100%
 
 const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
-BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", currentBattLevel);
+BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
 
 bool hasRun = 0;  // run flag to control single execution within loop
 
 /*****************************************************************************
 Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32, DFR0478)
-               note: must solder bridge zero-ohm pads to enable voltage divider hardware (ref DFR0478 Ver3 schematic)
+*!             Must solder-bridge zero-ohm pads to enable voltage divider hardware (ref DFR0478 Ver3 schematic)
 
-              If the ESP32-E has calibration eFused, these will be used.
+              Uses eFuse calibrations, if present (ESP32-E), otherwise alternative characterisation used
               In comparison with a regular voltmeter, ESP32 vs. multimeter values differ only ~0.05V
 Input Value : -
 Return Value: battery voltage in volts
@@ -121,7 +119,7 @@ float readBattery() {
     int rounds = 11;
     esp_adc_cal_characteristics_t adc_chars;
 
-    // battery voltage divided by 2 can be measured at GPIO36, which equals ADC1_CHANNEL0 for v1
+    // battery voltage divided by 2 can be measured at GPIO36 (ADC1_CHANNEL0)
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
     switch (esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars)) {
@@ -150,39 +148,56 @@ float readBattery() {
 }
 
 /*****************************************************************************
-Description : Tests whether battery charge is below  low voltage threshold
+Description : Tests for low battery charge (<=3V) and update BT Central device
+                with (%) battery charge level
 
-Input Value :
-Return Value: true
-*******************************************************************************
-bool isBatteryLow(uint32_t esp_adc_cal_raw_to_voltage) {
-    static unsigned long updateTimer = 0;
+Input Value : battery_voltage (volts)
+Return Value: true / false
+********************************************************************************/
+bool isBatteryLow(uint32_t battery_voltage) {
+    static unsigned long updateTimer_msec = 0;
 
-    if (millis() - updateTimer > 1000) {
-        bleKeyboard.setBatteryLevel(batteryAvg >= HI_VOLTAGE ? 100 : 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
+    if (millis() - updateTimer_msec > 1000) {
+        bleKeyboard.setBatteryLevel(
+            battery_voltage >= HIGH_BATTERY_VOLTAGE ? 100 : 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
         delay(BLE_DELAY);
-        // Serial.printf("Battery: %d%%\n", 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
-        updateTimer = millis();
+        Serial.printf("Battery: %d%%\n", 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
+        updateTimer_msec = millis();
     }
 
-    return batteryAvg <= LOW_VOLTAGE ? true : false;
+    return battery_voltage <= LOW_BATTERY_VOLTAGE ? true : false;
 }
+
+/*****************************************************************************
+Description : calculates battery level (percentage) and updates BT Central device
+
+Input Value : battery voltage (in Volts)
+Return Value: -
+*******************************************************************************
+int setBatteryLevel(float battery_voltage) {
+    // do something
+    bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
+    {
+        // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
 //  Ref: https://www.w3schools.com/colors/colors_picker.asp
 struct StatusColour {
-    int red, green, blue;  //rgb values, permissible values 0 - 255. 
+    int red, green, blue;  // rgb values, permissible values 0 - 255.
 };
 
 // pre-define status notification colours
 StatusColour blue_BT_connected{0, 0, 255};
 StatusColour green_fully_charged_battery{0, 255, 0};
-StatusColour magenta_low_battery{255, 255, 0};
+StatusColour magenta_low_battery{255, 255, 0};  //used magenta as orange colour was not distinct
 StatusColour red_critically_low_battery{255, 0, 0};
+
+// TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
+
 
 /*****************************************************************************
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
-               const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
+                const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
 
 Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp
@@ -237,8 +252,8 @@ void loop() {
             hasRun = 1;  // toggle flag to run connection notification only once
         }
 
-        //! warning: following delay() is blocking but necessary to avoid BT overflow errors - keep short or interferes with button presses
-        delay(10);  // value optimised through trial & error where no delay gives BT overflow errors
+        //! warning: delay() is blocking but necessary to prevent BT GATT overflow errors; must keep short or interferes with button presses
+        delay(BLE_DELAY);  //  optimised through trial & error, where no delay gives BT GATT overflow errors
 
         if (button.triggered(SINGLE_TAP)) {
             yield();  // Do (almost) nothing - yield allows ESP8266 background functions
@@ -258,7 +273,9 @@ void loop() {
             Serial.println("Long Press = Eject / show Battery Status Colour");
         }
 
-        bleKeyboard.setBatteryLevel(currentBattLevel);  // update battery level
+        float battery_voltage = readBattery();  // units Volts
+
+        // bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
 
     }  // end if ( bleKeyboard.isConnected() )
 

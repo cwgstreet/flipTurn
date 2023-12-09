@@ -254,16 +254,6 @@ void loop() {
     unsigned long current_time;
     bool flash_Led = false;
 
-    current_time = millis();
-    if (isBatteryLow(battery_voltage)) {
-        if (current_time - flash_timer > 1000)
-            flash_timer = millis();
-    } else {  // Force any current flash off if battery recovers
-        flash_timer = 0;
-    }
-
-    flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
-
     /*
     #ifdef DEBUG  // test LED colours
         setRgbColour(blue_BT_connected);
@@ -280,8 +270,20 @@ void loop() {
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
-        setRgbColour(blue_BT_connected);
-        delay(500);  //! debug line - remove!
+        current_time = millis();
+        if (isBatteryLow(battery_voltage)) {
+            if (current_time - flash_timer > 1000)
+                flash_timer = millis();
+        } else {  // Force any current flash off if battery recovers
+            flash_timer = 0;
+        }
+
+        flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
+
+        //setRgbColour(blue_BT_connected);
+        //delay(50);  //! debug line - remove!
+
+        battery_voltage = 3.0;  //! temporary debug line - remove!
 
         RedLedState(flash_Led ? true : false);
 

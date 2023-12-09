@@ -125,12 +125,12 @@ float readBattery() {
     switch (esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars)) {
         case ESP_ADC_CAL_VAL_EFUSE_TP:
 #ifdef DEBUG
-            Serial.println("Characterized using Two Point Value");
+            // Serial.println("Characterized using Two Point Value");
 #endif
             break;
         case ESP_ADC_CAL_VAL_EFUSE_VREF:
 #ifdef DEBUG
-            Serial.printf("Characterised using eFuse Vref (%d mV)\r\n", adc_chars.vref);
+            // Serial.printf("Characterised using eFuse Vref (%d mV)\r\n", adc_chars.vref);
 #endif
             break;
         default:
@@ -161,7 +161,7 @@ bool isBatteryLow(uint32_t battery_voltage) {
         bleKeyboard.setBatteryLevel(
             battery_voltage >= HIGH_BATTERY_VOLTAGE ? 100 : 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
         delay(BLE_DELAY);
-        Serial.printf("Battery: %d%%\n", 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
+        // Serial.printf("Battery: %d%%\n", 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
         updateTimer_msec = millis();
     }
 
@@ -189,11 +189,11 @@ struct StatusColour {
 // pre-define status notification colours
 StatusColour blue_BT_connected{0, 0, 255};
 StatusColour green_fully_charged_battery{0, 255, 0};
-StatusColour magenta_low_battery{255, 255, 0};  //used magenta as orange colour was not distinct
+StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
 StatusColour red_critically_low_battery{255, 0, 0};
+StatusColour white_blink{0, 0, 0};
 
 // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
-
 
 /*****************************************************************************
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
@@ -207,6 +207,20 @@ void setRgbColour(const StatusColour& statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);
+}
+
+/*****************************************************************************
+Description : blinks red (RGB) LED
+
+Input Value : LED state ON : OFF
+Return Value: -
+********************************************************************************/
+void RedLedState(bool state) {
+    if (state) {
+        setRgbColour(red_critically_low_battery);
+    } else {
+        setRgbColour(white_blink);
+    }
 }
 
 void setup() {
@@ -232,24 +246,44 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
-    float battery_voltage = readBattery();  // units Volts
+    float battery_voltage = readBattery();  // in Volts
+    battery_voltage = 3.0;                  //! temporary debug line - remove!
 
-    isBatteryLow(battery_voltage) ? flashRed() : yield();
+    static unsigned long flash_timer = 0;
 
-#ifdef DEBUG
-    // test LED colours
-    setRgbColour(blue_BT_connected);
-    delay(1000);
-    setRgbColour(green_fully_charged_battery);
-    delay(1000);
-    setRgbColour(magenta_low_battery);
-    delay(1000);
-    setRgbColour(red_critically_low_battery);
-    delay(1000);
-#endif
+    unsigned long current_time;
+    bool flash_Led = false;
+
+    current_time = millis();
+    if (isBatteryLow(battery_voltage)) {
+        if (current_time - flash_timer > 1000)
+            flash_timer = millis();
+    } else {  // Force any current flash off if battery recovers
+        flash_timer = 0;
+    }
+
+    flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
+
+    /*
+    #ifdef DEBUG  // test LED colours
+        setRgbColour(blue_BT_connected);
+        delay(1000);
+        setRgbColour(green_fully_charged_battery);
+        delay(1000);
+        setRgbColour(magenta_low_battery);
+        delay(1000);
+        setRgbColour(red_critically_low_battery);
+        delay(1000);
+    #endif
+    */
+
+    // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
         setRgbColour(blue_BT_connected);
+        delay(500);  //! debug line - remove!
+
+        RedLedState(flash_Led ? true : false);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");
@@ -277,10 +311,6 @@ void loop() {
             Serial.println("Long Press = Eject / show Battery Status Colour");
         }
 
-        
-
-        // bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
-
     }  // end if ( bleKeyboard.isConnected() )
 
-}  // end loop
+}  // end loop()

@@ -191,7 +191,7 @@ StatusColour blue_BT_connected{0, 0, 255};
 StatusColour green_fully_charged_battery{0, 255, 0};
 StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
 StatusColour red_critically_low_battery{255, 0, 0};
-StatusColour white_blink{0, 0, 0};
+StatusColour led_off{0, 0, 0};  //common cathode - current sourcing
 
 // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
 
@@ -216,10 +216,11 @@ Input Value : LED state ON : OFF
 Return Value: -
 ********************************************************************************/
 void RedLedState(bool state) {
+    setRgbColour(led_off);
     if (state) {
         setRgbColour(red_critically_low_battery);
     } else {
-        setRgbColour(white_blink);
+        setRgbColour(led_off);
     }
 }
 
@@ -254,6 +255,16 @@ void loop() {
     unsigned long current_time;
     bool flash_Led = false;
 
+    current_time = millis();
+    if (isBatteryLow(battery_voltage)) {
+        if (current_time - flash_timer > 1000)
+            flash_timer = millis();
+    } else {  // Force any current flash off if battery recovers
+        flash_timer = 0;
+    }
+
+    flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
+
     /*
     #ifdef DEBUG  // test LED colours
         setRgbColour(blue_BT_connected);
@@ -270,22 +281,13 @@ void loop() {
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
-        current_time = millis();
-        if (isBatteryLow(battery_voltage)) {
-            if (current_time - flash_timer > 1000)
-                flash_timer = millis();
-        } else {  // Force any current flash off if battery recovers
-            flash_timer = 0;
-        }
-
-        flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
-
-        //setRgbColour(blue_BT_connected);
-        //delay(50);  //! debug line - remove!
+        setRgbColour(blue_BT_connected);
+        delay(50); //! temporary debug line.  Blocking!  remove
 
         battery_voltage = 3.0;  //! temporary debug line - remove!
 
         RedLedState(flash_Led ? true : false);
+ 
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

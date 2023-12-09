@@ -232,6 +232,10 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
+    float battery_voltage = readBattery();  // units Volts
+
+    isBatteryLow(battery_voltage) ? flashRed() : yield();
+
 #ifdef DEBUG
     // test LED colours
     setRgbColour(blue_BT_connected);
@@ -273,7 +277,7 @@ void loop() {
             Serial.println("Long Press = Eject / show Battery Status Colour");
         }
 
-        float battery_voltage = readBattery();  // units Volts
+        
 
         // bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
 

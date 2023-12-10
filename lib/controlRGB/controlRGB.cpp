@@ -1,5 +1,7 @@
-/* *************************************************************
- * controlRGB.h - Header common cathode RGB LED control library
+/*
+ * *************************************************************
+ * controlRGB.h - implementation file for common cathode 
+ *   RGB LED control library
  *
  *
  *  C W Greenstreet, Ver1, 10Dec23

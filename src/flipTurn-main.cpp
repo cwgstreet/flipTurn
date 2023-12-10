@@ -102,6 +102,9 @@ const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
 
+// rgb led instantiation
+RgbLed rgbLed(RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN);
+
 bool hasRun = 0;  // run flag to control single execution within loop
 
 /*****************************************************************************

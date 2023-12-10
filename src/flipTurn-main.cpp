@@ -187,21 +187,7 @@ int setBatteryLevel(float battery_voltage) {
 */
 
 
-/*****************************************************************************
-Description : sets a defined colour on RGB LED by setting R, G and B values in an array
-                const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
 
-Input Value : R, G and B values for a specific colour output
-                see https://www.w3schools.com/colors/colors_picker.asp
-Return Value: - n/a -
-********************************************************************************/
-/*
-void setRgbColour(const StatusColour& statusColour) {
-    analogWrite(RED_LED_PIN, statusColour.red);
-    analogWrite(GREEN_LED_PIN, statusColour.green);
-    analogWrite(BLUE_LED_PIN, statusColour.blue);
-}
-*/
 /*****************************************************************************
 Description : blinks red (RGB) LED
 
@@ -280,10 +266,11 @@ void loop() {
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
-        /*
-        setRgbColour(blue_BT_connected);
-        delay(50);  //! temporary debug line.  Blocking!  remove
+        
+        rgbLed.setRgbColour(rgbLed.blue_BT_connected);
+        delay(10);  //! temporary debug line.  Blocking!  remove
 
+        /*
         battery_voltage = 3.0;  //! temporary debug line - remove!
 
         RedLedState(flash_Led ? true : false);

@@ -26,3 +26,5 @@ RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
     pinMode(_green_pin, OUTPUT);
     pinMode(_blue_pin, OUTPUT);
 }
+
+RgbLed::StatusColour statusColour;  

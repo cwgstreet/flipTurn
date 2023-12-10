@@ -186,10 +186,12 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
+/*
 //  Ref: https://www.w3schools.com/colors/colors_picker.asp
 struct StatusColour {
     int red, green, blue;  // rgb values, permissible values 0 - 255.
 };
+
 
 // pre-define status notification colours
 StatusColour blue_BT_connected{0, 0, 255};
@@ -199,7 +201,7 @@ StatusColour red_critically_low_battery{255, 0, 0};
 StatusColour led_off{0, 0, 0};  // common cathode - current sourcing
 
 // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
-
+*/
 /*****************************************************************************
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
                 const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
@@ -208,18 +210,21 @@ Input Value : R, G and B values for a specific colour output
                 see https://www.w3schools.com/colors/colors_picker.asp
 Return Value: - n/a -
 ********************************************************************************/
+/*
 void setRgbColour(const StatusColour& statusColour) {
     analogWrite(RED_LED_PIN, statusColour.red);
     analogWrite(GREEN_LED_PIN, statusColour.green);
     analogWrite(BLUE_LED_PIN, statusColour.blue);
 }
-
+*/
 /*****************************************************************************
 Description : blinks red (RGB) LED
 
 Input Value : LED state ON : OFF
 Return Value: -
 ********************************************************************************/
+
+/*
 void RedLedState(bool state) {
     setRgbColour(led_off);
     if (state) {
@@ -228,6 +233,7 @@ void RedLedState(bool state) {
         setRgbColour(led_off);
     }
 }
+*/
 
 void setup() {
     Serial.begin(115200);
@@ -254,6 +260,7 @@ void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
     button.update();
 
+    /*
     float battery_voltage = readBattery();  // in Volts
     battery_voltage = 3.0;                  //! temporary debug line - remove!
 
@@ -288,12 +295,14 @@ void loop() {
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
+        /*
         setRgbColour(blue_BT_connected);
         delay(50);  //! temporary debug line.  Blocking!  remove
 
         battery_voltage = 3.0;  //! temporary debug line - remove!
 
         RedLedState(flash_Led ? true : false);
+        */
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

@@ -20,6 +20,8 @@
 #include <pins_arduino.h>
 #endif  // end if-block
 
+
+
 class RgbLed {
    public:
     RgbLed(int red_pin, int green_pin, int blue_pin);  // constructor prototype
@@ -37,12 +39,21 @@ class RgbLed {
 
     // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
 
-    //method prototypes:
+    // method prototypes:
     void setRgbColour(const RgbLed::StatusColour& statusColour);
 
+    void ledBlink(const RgbLed::StatusColour& statusColour,
+                          unsigned long blink_interval_msec);
 
    private:
-    int _red_pin, _green_pin, _blue_pin;
+    int _red_pin,
+        _green_pin,
+        _blue_pin;
+
+    //unsigned long currentInterval_;  // time till we change state
+    //unsigned long _start_time;        // when we last changed state
 };
+
+//extern RgbLed rgbled;
 
 #endif  // end header guard

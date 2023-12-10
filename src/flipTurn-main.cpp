@@ -270,11 +270,8 @@ void loop() {
         rgbLed.setRgbColour(rgbLed.blue_BT_connected);
         delay(10);  //! temporary debug line.  Blocking!  remove
 
-        /*
-        battery_voltage = 3.0;  //! temporary debug line - remove!
-
-        RedLedState(flash_Led ? true : false);
-        */
+        //!  need to fix blink method - problem with arguments that are being passed
+        //rgbLed.ledBlink()
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

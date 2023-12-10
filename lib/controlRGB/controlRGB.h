@@ -37,6 +37,10 @@ class RgbLed {
 
     // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
 
+    //method prototypes:
+    void setRgbColour(const RgbLed::StatusColour& statusColour);
+
+
    private:
     int _red_pin, _green_pin, _blue_pin;
 };

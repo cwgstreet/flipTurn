@@ -28,3 +28,18 @@ RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
 }
 
 RgbLed::StatusColour statusColour;  
+
+/*****************************************************************************
+Description : sets a defined colour on RGB LED by passing RGB values through a struct
+                const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
+
+Input Value : R, G and B values for a specific colour output
+                see https://www.w3schools.com/colors/colors_picker.asp
+Return Value: - n/a -
+********************************************************************************/
+void RgbLed::setRgbColour(const RgbLed::StatusColour& statusColour) {
+    
+    analogWrite(_red_pin, statusColour.red);  // _red_pin
+    analogWrite(_green_pin, statusColour.green);  //GREEN_LED_PIN
+    analogWrite(_blue_pin, statusColour.blue);    //BLUE_LED_PIN
+}

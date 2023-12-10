@@ -186,22 +186,7 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
-/*
-//  Ref: https://www.w3schools.com/colors/colors_picker.asp
-struct StatusColour {
-    int red, green, blue;  // rgb values, permissible values 0 - 255.
-};
 
-
-// pre-define status notification colours
-StatusColour blue_BT_connected{0, 0, 255};
-StatusColour green_fully_charged_battery{0, 255, 0};
-StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
-StatusColour red_critically_low_battery{255, 0, 0};
-StatusColour led_off{0, 0, 0};  // common cathode - current sourcing
-
-// TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
-*/
 /*****************************************************************************
 Description : sets a defined colour on RGB LED by setting R, G and B values in an array
                 const pass by ref avoids inefficient copying yet prevents any changes to underlying struct

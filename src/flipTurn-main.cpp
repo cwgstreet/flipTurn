@@ -80,6 +80,8 @@
 // internal (user) libraries:
 #include "myConstants.h"  // all constants in one file + pinout table
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
+#include "controlRGB.h"   // rgb led control functions
+
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-processor stage
@@ -191,7 +193,7 @@ StatusColour blue_BT_connected{0, 0, 255};
 StatusColour green_fully_charged_battery{0, 255, 0};
 StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
 StatusColour red_critically_low_battery{255, 0, 0};
-StatusColour led_off{0, 0, 0};  //common cathode - current sourcing
+StatusColour led_off{0, 0, 0};  // common cathode - current sourcing
 
 // TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
 
@@ -236,10 +238,12 @@ void setup() {
     // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
     button.begin(SWITCH_PIN);
 
+    /* moved to library
     // set-up RGB LED
     pinMode(RED_LED_PIN, OUTPUT);
     pinMode(GREEN_LED_PIN, OUTPUT);
     pinMode(BLUE_LED_PIN, OUTPUT);
+    */
 
 }  // end setup
 
@@ -282,12 +286,11 @@ void loop() {
 
     if (bleKeyboard.isConnected()) {
         setRgbColour(blue_BT_connected);
-        delay(50); //! temporary debug line.  Blocking!  remove
+        delay(50);  //! temporary debug line.  Blocking!  remove
 
         battery_voltage = 3.0;  //! temporary debug line - remove!
 
         RedLedState(flash_Led ? true : false);
- 
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

@@ -78,10 +78,9 @@
 #include "esp_adc_cal.h"
 
 // internal (user) libraries:
+#include "controlRGB.h"   // rgb led control functions
 #include "myConstants.h"  // all constants in one file + pinout table
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
-#include "controlRGB.h"   // rgb led control functions
-
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-processor stage
@@ -186,8 +185,6 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
-
-
 /*****************************************************************************
 Description : blinks red (RGB) LED
 
@@ -266,12 +263,12 @@ void loop() {
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {
-        
-        rgbLed.setRgbColour(rgbLed.blue_BT_connected);
-        delay(10);  //! temporary debug line.  Blocking!  remove
+        //rgbLed.setRgbColour(rgbLed.blue_BT_connected);
+        //delay(10);  //! temporary debug line.  Blocking!  remove
 
         //!  need to fix blink method - problem with arguments that are being passed
-        //rgbLed.ledBlink()
+
+        rgbLed.ledBlink(rgbLed.red_critically_low_battery, 1000);
 
         if (hasRun = 0) {
             Serial.println("flipTurn BLE Device now connected!");

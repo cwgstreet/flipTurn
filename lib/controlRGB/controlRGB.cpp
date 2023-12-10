@@ -59,13 +59,14 @@ Return Value:
 //!  Need to fix statusColour argument passing as method is not right
 void RgbLed::ledBlink(const RgbLed::StatusColour& statusColour,
                       unsigned long blink_interval_msec) {
+    // switch expression is clever 1-line approach that evaluates to either 0 or 1 (odds & evens)
+    //  ref: https://blog.wokwi.com/5-ways-to-blink-an-led-with-arduino/
     switch ((millis() / blink_interval_msec) % 2) {
         case 0:
             this->setRgbColour(this->led_off);
             break;
         case 1:
-            this->setRgbColour(this->red_critically_low_battery);
-
+            this->setRgbColour(statusColour); 
             break;
     }
 }

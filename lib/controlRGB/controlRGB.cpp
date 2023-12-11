@@ -7,7 +7,6 @@
  *  C W Greenstreet, Ver1, 10Dec23
  *    MIT Licence - Released into the public domain
  *
- *
  * ************************************************************ */
 
 #include "controlRGB.h"
@@ -51,29 +50,24 @@ void RgbLed::setRgbColour(const RgbLed::StatusColour& statusColour) {
 }
 
 /*****************************************************************************
-Description : Displ
+Description : Blink RGB LED in designated colour
 
-Input Value :
-Return Value:
+Input Value : statusColour (see RgbLed Class for designated colour choices),
+              Blink interval in msec (interval = on time = off time)
+Return Value: -
 ********************************************************************************/
 //!  Need to fix statusColour argument passing as method is not right
 void RgbLed::ledBlink(const RgbLed::StatusColour& statusColour,
                       unsigned long blink_interval_msec) {
-    // switch expression is clever 1-line approach that evaluates to either 0 or 1 (odds & evens)
+    // switch expression uses clever 1-line approach that evaluates to either 0 or 1
     //  ref: https://blog.wokwi.com/5-ways-to-blink-an-led-with-arduino/
     switch ((millis() / blink_interval_msec) % 2) {
-        case 0:
+        case 0:  // led off
             this->setRgbColour(this->led_off);
             break;
-        case 1:
+        case 1:  // led on, displayed in designated colour (passed as argument)
             this->setRgbColour(statusColour); 
             break;
     }
 }
 
-/*
-  unsigned long now = millis();
-
-  if (((now - _start_time) >= blink_interval_msec)) {
-      _start_time = now;
- */

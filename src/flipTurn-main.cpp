@@ -75,7 +75,7 @@
 #include <BleKeyboard.h>
 #include <Bounce2.h>
 
-#include "esp_adc_cal.h"
+#include "esp_adc_cal.h"  // Espressif Analog to Digital Converter (ADC) Calibration Driver library
 
 // internal (user) libraries:
 #include "controlRGB.h"   // rgb led control functions
@@ -83,8 +83,8 @@
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
 
 //? ************** Selective Debug Scaffolding *********************
-// Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-processor stage
-//   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
+// Selective debug scaffold: comment out  lines below to disable debugging tests at pre-processor stage
+//   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore #ifdef 0 will not work!
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
 //? *****************************************************************
 #define DEBUG 1  // uncomment to debug
@@ -92,6 +92,7 @@
 
 //   battery operating ranges
 #define HIGH_BATTERY_VOLTAGE 3.70  // 4.2 - 3.7V battery "fully" charged
+#define CHARGE_WARNING_TRIGGER_VOLTAGE 3.20 // trigger voltage to warn that device requires charging
 #define LOW_BATTERY_VOLTAGE 3.00   // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
 
 int current_battery_level = 100;  // initially set to fully charged, 100%
@@ -185,23 +186,7 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
-/*****************************************************************************
-Description : blinks red (RGB) LED
 
-Input Value : LED state ON : OFF
-Return Value: -
-********************************************************************************/
-
-/*
-void RedLedState(bool state) {
-    setRgbColour(led_off);
-    if (state) {
-        setRgbColour(red_critically_low_battery);
-    } else {
-        setRgbColour(led_off);
-    }
-}
-*/
 
 void setup() {
     Serial.begin(115200);
@@ -215,12 +200,7 @@ void setup() {
     // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
     button.begin(SWITCH_PIN);
 
-    /* moved to library
-    // set-up RGB LED
-    pinMode(RED_LED_PIN, OUTPUT);
-    pinMode(GREEN_LED_PIN, OUTPUT);
-    pinMode(BLUE_LED_PIN, OUTPUT);
-    */
+    
 
 }  // end setup
 
@@ -232,20 +212,7 @@ void loop() {
     float battery_voltage = readBattery();  // in Volts
     battery_voltage = 3.0;                  //! temporary debug line - remove!
 
-    static unsigned long flash_timer = 0;
-
-    unsigned long current_time;
-    bool flash_Led = false;
-
-    current_time = millis();
-    if (isBatteryLow(battery_voltage)) {
-        if (current_time - flash_timer > 1000)
-            flash_timer = millis();
-    } else {  // Force any current flash off if battery recovers
-        flash_timer = 0;
-    }
-
-    flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
+    
 
     /*
     #ifdef DEBUG  // test LED colours

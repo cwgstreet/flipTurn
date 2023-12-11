@@ -81,6 +81,7 @@
 #include "controlRGB.h"   // rgb led control functions
 #include "myConstants.h"  // all constants in one file + pinout table
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
+#include "flipState.h"   //  library to manage flipTurn state machine
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold: comment out  lines below to disable debugging tests at pre-processor stage

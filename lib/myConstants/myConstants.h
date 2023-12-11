@@ -6,7 +6,7 @@
  *
  ** ************************************************************* */
 
-#ifndef MY_CONSTANTS_H
+#ifndef MY_CONSTANTS_H  // header guard
 #define MY_CONSTANTS_H
 
 #if ARDUINO >= 100  // this if-else block manages depreciated versions of Arduino IDE

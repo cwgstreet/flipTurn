@@ -13,7 +13,7 @@
  *
  * ************************************************************ */
 
-#ifndef PRESS_TYPE_H
+#ifndef PRESS_TYPE_H  // header guard
 #define PRESS_TYPE_H
 
 #if ARDUINO >= 100  // this if-else block manages depreciated versions of Arduino IDE

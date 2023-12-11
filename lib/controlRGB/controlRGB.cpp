@@ -75,9 +75,9 @@ Return Value: -
 void RgbLed::functionTest() {
     this->setRgbColour(blue_BT_connected);
     delay(1000);
-    this->setRgbColour(green_fully_charged_battery);
+    this->setRgbColour(green_high_battery_charge);
     delay(1000);
-    this->setRgbColour(magenta_low_battery);
+    this->setRgbColour(magenta_charge_battery_warning);
     delay(1000);
     this->setRgbColour(red_critically_low_battery);
     delay(1000);

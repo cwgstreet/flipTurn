@@ -29,8 +29,8 @@ class RgbLed {
 
     // pre-define status notification colours
     StatusColour blue_BT_connected{0, 0, 255};
-    StatusColour green_fully_charged_battery{0, 255, 0};
-    StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
+    StatusColour green_high_battery_charge{0, 255, 0};
+    StatusColour magenta_charge_battery_warning{255, 255, 0};  // used magenta as orange colour was not distinct
     StatusColour red_critically_low_battery{255, 0, 0};
     StatusColour led_off{0, 0, 0};  // common cathode - current sourcing
 

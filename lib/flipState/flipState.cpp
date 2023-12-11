@@ -14,6 +14,36 @@
 
 #include "flipState.h"
 
+// entryStates is an enum variable type defined in menu.h header file (as extern); smokerState is global
+entryStates_t flipState;
+
+void processState() {
+    switch (flipState) {
+        case BT_connected:
+            /* code */
+            break;
+
+        case high_battery_charge:
+            /* code */
+            break;
+
+        case warning_charge_battery_now:
+            /* code */
+            break;
+
+        case low_battery:
+            /* code */
+            break;
+
+        case auto_shut_down:
+            /* code */
+            break;
+
+        default:
+            break;
+    }
+}
+
 /*
 // RgbLed constructor for common cathode RGB LED
 RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
@@ -23,9 +53,6 @@ RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
     pinMode(_green_pin, OUTPUT);
     pinMode(_blue_pin, OUTPUT);
 }*/
-
-
-
 
 /*****************************************************************************
 Purpose     : Blink RGB LED in designated colour

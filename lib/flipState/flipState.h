@@ -19,7 +19,41 @@
 #include <pins_arduino.h>
 #endif  // end if-block
 
+// Prepare case names for flipTurn State Machine switch-case stucture
+enum entryStates_t { BT_connected = 1,  // set enum 1 to 10 rather than default 0 for first element
+                     high_battery_charge,
+                     warning_charge_battery_now,
+                     low_battery, 
+                     auto_shut_down};  // 5
+
 /*
+// smokerState type defined in implementation smokerState.cpp, hence extern keyword
+extern entryStates_t smokerState;
+
+// globals, defined in main
+extern long unsigned startCookTime_ms;
+extern long unsigned previousMillis;
+extern long unsigned transmitInterval;
+extern long unsigned previousDisplayMillis;
+extern long unsigned displayInterval;
+
+
+/******************************************************
+// Helper function prototype:
+******************************************************
+
+// process_state() prototype
+void processState(CWG_LCD &lcd);
+
+
+
+StatusColour blue_BT_connected{0, 0, 255};
+    StatusColour green_fully_charged_battery{0, 255, 0};
+    StatusColour magenta_charge_battery_warning{255, 255, 0};  // used magenta as orange colour was not distinct
+    StatusColour red_critically_low_battery{255, 0, 0};
+    StatusColour led_off{0, 0, 0};
+
+
 class xxx {
    public:
     RgbLed(int red_pin, int green_pin, int blue_pin);  // constructor prototype

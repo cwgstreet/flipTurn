@@ -9,15 +9,11 @@
  *
  * ************************************************************ */
 
+//!  debug scaffold not used - remove if it remains unused
+// set up debug scaffold; comment out following line if you want to "turn off" debugging to serial monitor
+// #define DEBUG 1
+
 #include "controlRGB.h"
-
-// extern RgbLed rgbled;
-
-/*
-constexpr int RED_LED_PIN = D2;
-constexpr int GREEN_LED_PIN = D3;
-constexpr int BLUE_LED_PIN = D4;
-*/
 
 // RgbLed constructor for common cathode RGB LED
 RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
@@ -31,7 +27,7 @@ RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
 RgbLed::StatusColour statusColour;
 
 /*****************************************************************************
-Description : Displays a defined RGB LED colour by passing R, G and B values through a struct
+Purpose     : Displays a defined RGB LED colour by passing R, G and B values through a struct
                 const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
 
 Input Value : Class struct instantiation for pre-defined status colours, containing
@@ -50,7 +46,7 @@ void RgbLed::setRgbColour(const RgbLed::StatusColour& statusColour) {
 }
 
 /*****************************************************************************
-Description : Blink RGB LED in designated colour
+Purpose     : Blink RGB LED in designated colour
 
 Input Value : statusColour (see RgbLed Class for designated colour choices),
               Blink interval in msec (interval = on time = off time)
@@ -66,8 +62,26 @@ void RgbLed::ledBlink(const RgbLed::StatusColour& statusColour,
             this->setRgbColour(this->led_off);
             break;
         case 1:  // led on, displayed in designated colour (passed as argument)
-            this->setRgbColour(statusColour); 
+            this->setRgbColour(statusColour);
             break;
     }
 }
 
+/*****************************************************************************
+Purpose     : Test RGB LED by cycling through designated status colours
+
+Input Value : -
+Return Value: -
+********************************************************************************/
+void RgbLed::functionTest() {
+    this->setRgbColour(blue_BT_connected);
+    delay(1000);
+    this->setRgbColour(green_fully_charged_battery);
+    delay(1000);
+    this->setRgbColour(magenta_low_battery);
+    delay(1000);
+    this->setRgbColour(red_critically_low_battery);
+    delay(1000);
+    this->setRgbColour(led_off);
+    delay(1000);
+}

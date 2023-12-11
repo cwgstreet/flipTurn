@@ -211,21 +211,7 @@ void loop() {
     /*
     float battery_voltage = readBattery();  // in Volts
     battery_voltage = 3.0;                  //! temporary debug line - remove!
-
-    
-
-    /*
-    #ifdef DEBUG  // test LED colours
-        setRgbColour(blue_BT_connected);
-        delay(1000);
-        setRgbColour(green_fully_charged_battery);
-        delay(1000);
-        setRgbColour(magenta_low_battery);
-        delay(1000);
-        setRgbColour(red_critically_low_battery);
-        delay(1000);
-    #endif
-    */
+    */ 
 
     // TODO:  auto-shutdown if battery_voltage < 3V
 

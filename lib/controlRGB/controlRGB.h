@@ -42,6 +42,8 @@ class RgbLed {
     void ledBlink(const RgbLed::StatusColour& statusColour,
                   unsigned long blink_interval_msec);
 
+    void functionTest();
+
    private:
     int _red_pin,
         _green_pin,

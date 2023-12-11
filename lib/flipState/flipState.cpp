@@ -17,7 +17,7 @@
 // entryStates is an enum variable type defined in menu.h header file (as extern); smokerState is global
 entryStates_t flipState;
 
-void processState() {
+void processState(int flipState) {
     switch (flipState) {
         case BT_connected:
             /* code */

@@ -52,7 +52,6 @@ Input Value : statusColour (see RgbLed Class for designated colour choices),
               Blink interval in msec (interval = on time = off time)
 Return Value: -
 ********************************************************************************/
-//!  Need to fix statusColour argument passing as method is not right
 void RgbLed::ledBlink(const RgbLed::StatusColour& statusColour,
                       unsigned long blink_interval_msec) {
     // switch expression uses clever 1-line approach that evaluates to either 0 or 1

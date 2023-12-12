@@ -29,7 +29,8 @@ enum entryStates_t { check_BT_connection = 1,  // set enum 1 to 10 rather than d
                      high_battery_charge,
                      warning_charge_battery_now,
                      low_battery,
-                     auto_shut_down };  // 5
+                     battery_status,
+                     auto_shut_down };  // 6
 
 // make flipState global (visible everywhere)
 extern entryStates_t flipState;

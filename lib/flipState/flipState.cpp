@@ -12,28 +12,24 @@
 // #define DEBUG 1
 
 #include "flipState.h"
-#include <BleKeyboard.h>
-#include "esp_adc_cal.h"  // Espressif Analog to Digital Converter (ADC) Calibration Driver library
 
+#include <BleKeyboard.h>
+
+#include "esp_adc_cal.h"  // Espressif Analog to Digital Converter (ADC) Calibration Driver library
 
 //   battery operating ranges
 #define HIGH_BATTERY_VOLTAGE 3.70            // 4.2 - 3.7V battery "fully" charged
 #define CHARGE_WARNING_TRIGGER_VOLTAGE 3.20  // trigger voltage to warn that device requires charging
 #define LOW_BATTERY_VOLTAGE 3.00             // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
 
-
 int current_battery_level = 100;  // initially set to fully charged, 100%
-
 
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
 
 const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 
-
 // entryStates is an enum variable type defined in menu.h header file (as extern); smokerState is global
 entryStates_t flipState;
-
-
 
 /*****************************************************************************
 Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32, DFR0478)
@@ -129,6 +125,10 @@ void processState() {
             break;
 
         case low_battery:
+            /* code */
+            break;
+
+        case battery_status:
             /* code */
             break;
 

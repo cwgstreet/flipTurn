@@ -102,6 +102,7 @@ bool hasRun = 0;  // run flag to control single execution within loop
 
 void setup() {
     Serial.begin(115200);
+    delay(2500); // give serial monitor time to initialise so it can display status messages
 
 #ifdef DEBUG
     Serial.println("Preparing flipTurn for BLE connection");
@@ -134,7 +135,9 @@ void loop() {
 
         else if (button.triggered(HOLD)) {
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
+            flipState = battery_status;
             Serial.println("Long Press = Eject / show Battery Status Colour");
+            
         }
     }
 

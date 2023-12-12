@@ -13,7 +13,7 @@
  *
  * ************************************************************ */
 
-// set up debug scaffold; comment out following line if you want to "turn off" debugging to serial monitor 
+// set up debug scaffold; comment out following line if you want to "turn off" debugging to serial monitor
 #define DEBUG 1
 
 #include "press_type.h"
@@ -23,10 +23,7 @@
 
 #include "myConstants.h"  // all constants in one file
 
-//const long BAUD_RATE = 115200;  // match native ESP8266 bootup baud rate to view bootup info, otherwise gibberish
 const long BAUD_RATE = 115200;  // match native ESP8266 bootup baud rate to view bootup info, otherwise gibberish
-
-
 
 Press_Type button(SWITCH_PIN);  // instantiate button object from press_type (YABL child) library
 
@@ -96,18 +93,11 @@ void Press_Type::functionTest() {
         Serial.println(pressEventCode);
     }
     if (pressEventCode == 2) {
-        Serial.print("*** Long Press! pressEventCode = ");
-        Serial.println(pressEventCode);
-    }
-    if (pressEventCode == 3) {
         Serial.print("*** Double Press! pressEventCode = ");
         Serial.println(pressEventCode);
     }
+    if (pressEventCode == 3) {
+        Serial.print("*** Long Press! pressEventCode = ");
+        Serial.println(pressEventCode);
+    }
 }
-
-// unecessary code - can go straight to inherited button.update()
-/*
-void Press_Type::checkPress() {
-    button.update();
-}
- */

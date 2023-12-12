@@ -28,8 +28,8 @@
 
 enum pressType_T { NO_PRESS,
                    SHORT_PRESS,
-                   LONG_PRESS,
-                   DOUBLE_PRESS };
+                   DOUBLE_PRESS,
+                   LONG_PRESS};
 
 // pressEventCode_T defined in implementation file, press_type.cpp, hence extern keyword
 extern pressType_T pressEventCode;

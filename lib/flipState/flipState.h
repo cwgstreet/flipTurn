@@ -19,8 +19,8 @@
 #include <pins_arduino.h>
 #endif  // end if-block
 
-
-#include <BleKeyboard.h>  // required in header file
+// required in header file as BLEKeyboard object referred to as extern; otherwise compiler error
+#include <BleKeyboard.h>  
 
 
 
@@ -37,7 +37,6 @@ enum entryStates_t { check_BT_connection = 1,  // set enum 1 to 10 rather than d
 
 
 // globals, defined in main
-// extern long unsigned startCookTime_ms;
 //int current_battery_level;  
 
 extern BleKeyboard bleKeyboard; 
@@ -51,11 +50,7 @@ bool isBatteryLow(uint32_t battery_voltage);
 // int setBatteryLevel(float battery_voltage);
 
 /*
-StatusColour blue_BT_connected{0, 0, 255};
-    StatusColour green_fully_charged_battery{0, 255, 0};
-    StatusColour magenta_charge_battery_warning{255, 255, 0};  // used magenta as orange colour was not distinct
-    StatusColour red_critically_low_battery{255, 0, 0};
-    StatusColour led_off{0, 0, 0};
+
 
 
 class xxx {

@@ -76,10 +76,10 @@
 #include <Bounce2.h>
 
 // internal (user) libraries:
-#include "myConstants.h"  // all constants in one file + pinout table
-#include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
 #include "controlRGB.h"   // rgb led control functions
 #include "flipState.h"    //  library to manage flipTurn state machine
+#include "myConstants.h"  // all constants in one file + pinout table
+#include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
 
 //? ************** Selective Debug Scaffolding *********************
 // Selective debug scaffold: comment out  lines below to disable debugging tests at pre-processor stage
@@ -89,11 +89,11 @@
 #define DEBUG 1  // uncomment to debug
 //? ************ end Selective Debug Scaffolding ********************
 
-extern const byte BLE_DELAY;  // Delay (milliseconds) to prevent BT congestion
+extern const byte BLE_DELAY;       // Delay (milliseconds) to prevent BT congestion
 extern int current_battery_level;  // initially set to fully charged, 100%
 
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
-//extern BleKeyboard bleKeyboard();
+// extern BleKeyboard bleKeyboard();
 
 // rgb led instantiation
 RgbLed rgbLed(RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN);
@@ -116,7 +116,27 @@ void setup() {
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
-    button.update();
+              // button.update();
+
+    // monitor switch with response depending on designated pressTypes (Single Press, Double Press, Hold Press)
+    if (button.update()) {
+        // true = a switch event was triggered
+
+        if (button.triggered(SINGLE_TAP)) {
+            bleKeyboard.write(KEY_DOWN_ARROW);
+            Serial.println("Single Tap = Down Arrow");
+        }
+
+        else if (button.triggered(DOUBLE_TAP)) {
+            bleKeyboard.write(KEY_UP_ARROW);
+            Serial.println("Double Tap = Up Arrow");
+        }
+
+        else if (button.triggered(HOLD)) {
+            bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
+            Serial.println("Long Press = Eject / show Battery Status Colour");
+        }
+    }
 
     /*
     float battery_voltage = readBattery();  // in Volts
@@ -131,34 +151,16 @@ void loop() {
 
         //!  need to fix blink method - problem with arguments that are being passed
 
-        rgbLed.ledBlink(rgbLed.red_critically_low_battery, 1000);
+        // rgbLed.ledBlink(rgbLed.red_critically_low_battery, 1000);
 
-        if (hasRun = 0) {
+        if (!hasRun) {
             Serial.println("flipTurn BLE Device now connected!");
             hasRun = 1;  // toggle flag to run connection notification only once
         }
 
         //! warning: delay() is blocking but necessary to prevent BT GATT overflow errors; must keep short or interferes with button presses
         //!  Currently, code will give linking error: "undefined reference to `BLE_DELAY'"
-        //delay(BLE_DELAY);  //  optimised through trial & error, where no delay gives BT GATT overflow errors
-
-        if (button.triggered(SINGLE_TAP)) {
-            yield();  // Do (almost) nothing - yield allows ESP8266 background functions
-            bleKeyboard.write(KEY_DOWN_ARROW);
-            Serial.println("Single Tap = Down Arrow");
-        }
-
-        if (button.triggered(DOUBLE_TAP)) {
-            yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
-            bleKeyboard.write(KEY_UP_ARROW);
-            Serial.println("Double Tap = Up Arrow");
-        }
-
-        if (button.triggered(LONG_PRESS)) {
-            yield();                             // Do (almost) nothing -- yield allows ESP8266 background functions
-            bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
-            Serial.println("Long Press = Eject / show Battery Status Colour");
-        }
+        // delay(BLE_DELAY);  //  optimised through trial & error, where no delay gives BT GATT overflow errors
 
     }  // end if ( bleKeyboard.isConnected() )
 

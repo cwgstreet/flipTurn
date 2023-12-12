@@ -52,7 +52,7 @@ float readBattery() {
     int rounds = 11;
     esp_adc_cal_characteristics_t adc_chars;
 
-    // battery voltage divided by 2 can be measured at GPIO36 (ADC1_CHANNEL0)
+    // battery voltage divided by 2 can be measured at GPIO36 / A0 pin (ADC1_CHANNEL0)
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
     switch (esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars)) {

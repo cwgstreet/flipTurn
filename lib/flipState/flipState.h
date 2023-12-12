@@ -44,7 +44,7 @@ extern BleKeyboard bleKeyboard;
 /******************************************************
 // Function prototype:
 ******************************************************/
-void processState(int flipState);
+void processState();
 float readBattery();
 bool isBatteryLow(uint32_t battery_voltage);
 // int setBatteryLevel(float battery_voltage);

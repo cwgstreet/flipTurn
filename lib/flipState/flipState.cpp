@@ -114,7 +114,7 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
-void processState(int flipState) {
+void processState() {
     switch (flipState) {
         case check_BT_connection:
             /* code */

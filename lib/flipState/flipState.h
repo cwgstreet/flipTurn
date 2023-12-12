@@ -31,8 +31,8 @@ enum entryStates_t { check_BT_connection = 1,  // set enum 1 to 10 rather than d
                      low_battery,
                      auto_shut_down };  // 5
 
-// smokerState type defined in implementation smokerState.cpp, hence extern keyword
-// extern entryStates_t smokerState;
+// make flipState global (visible everywhere)
+extern entryStates_t flipState;
 
 
 

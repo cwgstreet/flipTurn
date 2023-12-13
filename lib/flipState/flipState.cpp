@@ -34,7 +34,7 @@ RgbLed rgbLed(RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN);
 
 const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 
-// entryStates is an enum variable type defined in menu.h header file (as extern); smokerState is global
+// entryStates is an enum variable type defined in menu.h header file (as extern); flipState is global
 entryStates_t flipState;
 
 /*****************************************************************************
@@ -116,20 +116,26 @@ int setBatteryLevel(float battery_voltage) {
         // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */
 
-void processState() {
+/*****************************************************************************
+Description : state machine, primarily to process status LED states
 
+Input Value : -
+Return Value: -
+*******************************************************************************/
+void processState() {
     float battery_voltage = readBattery();  // in Volts
     battery_voltage = 3.9;                  // debug test
 
     switch (flipState) {
         case check_BT_connection:
-#ifdef DEBUG
-            Serial.println("Entered flipState = check_BT_connection");
-#endif
             if (bleKeyboard.isConnected()) {
+                if (!hasRun) {
+                    Serial.println("Entered flipState : check_BT_connection");
+                    Serial.println("flipTurn BLE Device connected!");
+                    hasRun = 1;  // toggle flag to run connection notification only once
+                }
                 rgbLed.setRgbColour(rgbLed.blue_BT_connected);
             }
-
             break;
 
         case high_battery_charge:

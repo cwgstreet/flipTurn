@@ -90,7 +90,7 @@ constexpr float CHARGE_NOW_VOLTAGE = 3.20;  // trigger voltage to warn that devi
 constexpr float LOW_BATTERY_VOLTAGE = 3.00;             // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
 
 //timer
-static unsigned long ledTimer_msec = 0;
+//static unsigned long ledTimer_msec = 0;
 
 
 

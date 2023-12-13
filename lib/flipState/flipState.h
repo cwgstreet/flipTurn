@@ -37,10 +37,16 @@ extern entryStates_t flipState;
 
 
 
+
 // globals, defined in main
 //int current_battery_level;  
 
 extern BleKeyboard bleKeyboard; 
+
+//timer - declared as global in flipTurn-main.cpp
+extern unsigned long ledTimer_msec;
+
+extern bool hasRun;
 
 /******************************************************
 // Function prototype:

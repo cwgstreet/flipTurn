@@ -76,7 +76,6 @@
 #include <Bounce2.h>
 
 // internal (user) libraries:
-#include "controlRGB.h"   // rgb led control functions
 #include "flipState.h"    //  library to manage flipTurn state machine
 #include "myConstants.h"  // all constants in one file + pinout table
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
@@ -91,18 +90,19 @@
 
 extern const byte BLE_DELAY;       // Delay (milliseconds) to prevent BT congestion
 extern int current_battery_level;  // initially set to fully charged, 100%
+// extern entryStates_t flipState;
 
 // blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
 // extern BleKeyboard bleKeyboard();
-
-// rgb led instantiation
-RgbLed rgbLed(RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN);
 
 bool hasRun = 0;  // run flag to control single execution within loop
 
 void setup() {
     Serial.begin(115200);
-    delay(2500); // give serial monitor time to initialise so it can display status messages
+    delay(2500);  // give serial monitor time to initialise to display early status messages
+
+    //flipState = check_BT_connection;
+    flipState = battery_status;
 
 #ifdef DEBUG
     Serial.println("Preparing flipTurn for BLE connection");
@@ -110,14 +110,14 @@ void setup() {
 
     bleKeyboard.begin();
 
-    // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
+    // initialise button (eg foot switch); see press_type set-up code
     button.begin(SWITCH_PIN);
 
 }  // end setup
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
-              // button.update();
+    processState();
 
     // monitor switch with response depending on designated pressTypes (Single Press, Double Press, Hold Press)
     if (button.update()) {
@@ -136,16 +136,19 @@ void loop() {
         else if (button.triggered(HOLD)) {
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
             flipState = battery_status;
+
             Serial.println("Long Press = Eject / show Battery Status Colour");
-            
         }
     }
 
     /*
-    float battery_voltage = readBattery();  // in Volts
-    battery_voltage = 3.0;                  //! temporary debug line - remove!
-    */
+        float battery_voltage = readBattery();  // in Volts
+        battery_voltage = 3.9;                  //! temporary debug line - remove!
 
+        if (battery_voltage >= 3.7) {
+            flipState = high_battery_charge;
+        }
+    */
     // TODO:  auto-shutdown if battery_voltage < 3V
 
     if (bleKeyboard.isConnected()) {

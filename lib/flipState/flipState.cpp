@@ -9,22 +9,28 @@
  * ************************************************************ */
 
 // set up debug scaffold; comment out following line if you want to "turn off" debugging to serial monitor
-// #define DEBUG 1
+#define DEBUG 1
 
 #include "flipState.h"
 
 #include <BleKeyboard.h>
 
+#include "controlRGB.h"   // rgb led control functions
 #include "esp_adc_cal.h"  // Espressif Analog to Digital Converter (ADC) Calibration Driver library
+#include "myConstants.h"  // all constants in one file + pinout table
 
+/* moved to myConstants - delete section once compile checked
 //   battery operating ranges
 #define HIGH_BATTERY_VOLTAGE 3.70            // 4.2 - 3.7V battery "fully" charged
 #define CHARGE_WARNING_TRIGGER_VOLTAGE 3.20  // trigger voltage to warn that device requires charging
 #define LOW_BATTERY_VOLTAGE 3.00             // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
+*/
 
 int current_battery_level = 100;  // initially set to fully charged, 100%
 
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
+// rgb led instantiation
+RgbLed rgbLed(RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN);
 
 const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
 
@@ -111,25 +117,47 @@ int setBatteryLevel(float battery_voltage) {
 */
 
 void processState() {
+
+    float battery_voltage = readBattery();  // in Volts
+    battery_voltage = 3.9;                  // debug test
+
     switch (flipState) {
         case check_BT_connection:
-            /* code */
+#ifdef DEBUG
+            Serial.println("Entered flipState = check_BT_connection");
+#endif
+            if (bleKeyboard.isConnected()) {
+                rgbLed.setRgbColour(rgbLed.blue_BT_connected);
+            }
+
             break;
 
         case high_battery_charge:
-            /* code */
+            if (millis() - ledTimer_msec <= 5000) {
+                rgbLed.setRgbColour(rgbLed.green_high_battery_charge);
+                flipState = check_BT_connection;
+            }
             break;
 
         case warning_charge_battery_now:
-            /* code */
+            // TODO: add timer 10 sec
+            rgbLed.setRgbColour(rgbLed.magenta_charge_battery_warning);
+
+            flipState = check_BT_connection;
             break;
 
         case low_battery:
-            /* code */
+            rgbLed.ledBlink(rgbLed.red_critically_low_battery, 1000);
             break;
 
         case battery_status:
-            /* code */
+            if (battery_voltage >= HIGH_BATTERY_VOLTAGE) {
+                flipState = high_battery_charge;
+            } else if ((battery_voltage >= CHARGE_NOW_VOLTAGE) && (battery_voltage < HIGH_BATTERY_VOLTAGE)) {
+                flipState = warning_charge_battery_now;
+            } else if ((battery_voltage >= LOW_BATTERY_VOLTAGE) && (battery_voltage < CHARGE_NOW_VOLTAGE)) {
+                flipState = low_battery;
+            }
             break;
 
         case auto_shut_down:

@@ -76,7 +76,6 @@ constexpr int RED_LED_PIN = D2;
 constexpr int GREEN_LED_PIN = D3;
 constexpr int BLUE_LED_PIN = D4;
 
-
 // ---------------------------------------------------------
 // Baudrate:  Recommend 74480 baud rate for ESP8266 devices to match ESP8266 fixed bootloader initialisation speed
 //  (otherwise you will get startup gibberish characters on serial monitor before serial speed syncs)
@@ -85,7 +84,13 @@ constexpr int BLUE_LED_PIN = D4;
 //#define SERIAL_MONITOR_SPEED 74880  // change to constexpr
 constexpr int SERIAL_MONITOR_SPEED = 115200;
 
+//   battery operating ranges
+constexpr float HIGH_BATTERY_VOLTAGE = 3.70;            // 4.2 - 3.7V battery "fully" charged
+constexpr float CHARGE_NOW_VOLTAGE = 3.20;  // trigger voltage to warn that device requires charging
+constexpr float LOW_BATTERY_VOLTAGE = 3.00;             // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
 
+//timer
+static unsigned long ledTimer_msec = 0;
 
 
 

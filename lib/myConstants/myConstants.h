@@ -27,21 +27,26 @@
  *  DFR0478 (Firebeetle ESP32 Ver1) microcontroller pinout:
  *   Pin        Function    Comment
  *   -------    --------    -----------------------------------------------
- *   D2 (IO25)   R-LED      Red anode RGB LED (xx ohm current limiting resistor)
- *   D3 (IO26)   G-LED      Green anode RGB LED (xx ohm current limiting resistor)
- *   D4 (IO26 )  B-LED      Blue anode RGB LED (xx ohm current limiting resistor)
  *   GND         GND        Split line ground between switch and RGB LED
  *   A0 (IO36)   BATT_PIN   Read battery voltage (must bridge Rx and Ry zero ohm resistor pads on Firebeetle voltage divider)
  *   D6 (IO10)   SWITCH_PIN Microswitch; enable built-in pullup resistor, eg pinMode(D6, INPUT_PULLUP);
- *   xx (IOxx)   R-LED      (future) Red anode RGB LED (xx ohm current limiting resistor)
- *   xx (IOxx)   G-LED      (future) Green anode RGB LED (xx ohm current limiting resistor)
- *   xx (IOxx )  B-LED      (future) Blue anode RGB LED (xx ohm current limiting resistor)
+ *   34 (IOxx)   R-LED      (future) Red anode RGB LED (xx ohm current limiting resistor)
+ *   35 (IOxx)   G-LED      (future) Green anode RGB LED (xx ohm current limiting resistor)
+ *   15 (IOxx )  B-LED      (future) Blue anode RGB LED (xx ohm current limiting resistor)
  *  *******************************************************
+ *    Note:  See Firebeetle pin mapping table for full board pin-out; pin number 35 is same as GPIO35 / IO35
+ * 
+ * 
+ *   Initial prototype (not used in final device):
+ *   -------    --------    -----------------------------------------------
+ *   D2 (IO25)   R-LED      Red anode RGB LED (xx ohm current limiting resistor)
+ *   D3 (IO26)   G-LED      Green anode RGB LED (xx ohm current limiting resistor)
+ *   D4 (IO26 )  B-LED      Blue anode RGB LED (xx ohm current limiting resistor)
  */
 
 //!  A0 Battery divider (GPIO36)
 //!  ----------------------------------------------
-//!   Another caveat is the usage of pin 36 A0 may conflict with wifi.
+//!   Another caveat is the usage of pin 36 A0 may conflict with wifi (note: not confirmed)
 //!   To avoid that, the battery must be measured before the wifi is activated.
 
 /*
@@ -90,7 +95,7 @@ constexpr float LOW_BATTERY_VOLTAGE = 3.00;   // lower bound battery operating r
 constexpr float LED_DURATION_MSEC = 3000;  // 3 seconds
 
 // startup delay
-constexpr float STARTUP_DELAY_MSEC = 2500;  // 2.5 seconds
+constexpr float STARTUP_DELAY_MSEC = 4000;  // 4 seconds
 
 // *******************************************************
 //   Other constants

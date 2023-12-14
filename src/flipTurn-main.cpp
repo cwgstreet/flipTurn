@@ -85,29 +85,24 @@
 //   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore #ifdef 0 will not work!
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
 //? *****************************************************************
-#define DEBUG 1  // uncomment to debug
+// #define DEBUG 1  // uncomment to debug
 //? ************ end Selective Debug Scaffolding ********************
 
 extern const byte BLE_DELAY;       // Delay (milliseconds) to prevent BT congestion
 extern int current_battery_level;  // initially set to fully charged, 100%
-// extern entryStates_t flipState;
 
-// blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
-// extern BleKeyboard bleKeyboard();
-
-//timer - global
+// timer - global
 unsigned long ledTimer_msec = 0;
 
-//unsigned long ledTimer_value = 0;  //! debug line; delete after bug identified
-
-bool hasRun = 0;  // run flag to control single execution within loop
+// run-once flags
+bool hasRun = 0;           // run flag to control single execution within loop
+bool flipStateHasRun = 0;  // run flag to run flipState config once
 
 void setup() {
     Serial.begin(115200);
     delay(STARTUP_DELAY_MSEC);  // give serial monitor time to initialise to display early status messages
 
-    //flipState = check_BT_connection;
-    flipState = battery_status;
+    // flipState = battery_status;  // show battery status at power-up
 
 #ifdef DEBUG
     Serial.println("Preparing flipTurn for BLE connection");
@@ -122,11 +117,25 @@ void setup() {
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
+
+    // automatically show battery status on LED at device start-up
+    if (!flipStateHasRun) {  // flag ensures this runs once only
+        ledTimer_msec = millis();  // get timer mark for flipState
+        flipState = battery_status;
+#ifdef DEBUG
+        Serial.println("--------------------------");
+        Serial.print("flipStateHasRun; flipState = ");
+        Serial.println(flipState);
+        Serial.println("--------------------------");
+#endif
+        flipStateHasRun = 1;  // toggle flag to run connection notification only once
+    }
+
     processState();
 
     // monitor switch button with response depending on designated pressTypes (Single Press, Double Press, Hold Press)
     if (button.update()) {
-        // true = when a switch (button press)event triggered
+        // true = when a switch (button press) event triggered
 
         if (button.triggered(SINGLE_TAP)) {
             bleKeyboard.write(KEY_DOWN_ARROW);
@@ -140,14 +149,11 @@ void loop() {
 
         else if (button.triggered(HOLD)) {
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
-            ledTimer_msec = millis();  //! update times; trying to debug flipState
+            ledTimer_msec = millis();            //! update times; trying to debug flipState
             flipState = battery_status;
 
             Serial.println("Long Press = Eject / show Battery Status Colour");
-            //Serial.println("ledTimer_msec = ");
-            //Serial.print(ledTimer_msec);
         }
     }
 
-    
 }  // end loop()

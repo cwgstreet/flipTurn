@@ -33,11 +33,7 @@ enum entryStates_t { check_BT_connection = 1,  // set enum 1 to 10 rather than d
                      auto_shut_down };  // 6
 
 // make flipState global (visible everywhere)
-extern entryStates_t flipState;
-
-
-// globals, defined in main
-//int current_battery_level;  
+extern entryStates_t flipState;  
 
 extern BleKeyboard bleKeyboard; 
 
@@ -48,33 +44,13 @@ extern unsigned long ledTimer_msec;
 extern bool hasRun;
 
 /******************************************************
-// Function prototype:
+// Function prototypes:
 ******************************************************/
 void processState();
 float readBattery();
 bool isBatteryLow(uint32_t battery_voltage);
-// int setBatteryLevel(float battery_voltage);
-
-/*
+// int setBatteryLevel(float battery_voltage);  //* not used
 
 
-
-class xxx {
-   public:
-    RgbLed(int red_pin, int green_pin, int blue_pin);  // constructor prototype
-
-
-    // method prototypes:
-    void setRgbColour(const RgbLed::StatusColour& statusColour);
-
-    void ledBlink(const RgbLed::StatusColour& statusColour,
-                  unsigned long blink_interval_msec);
-
-    void functionTest();
-
-   private:
-    //  private var and methods
-};
-*/
 
 #endif  // end header guard

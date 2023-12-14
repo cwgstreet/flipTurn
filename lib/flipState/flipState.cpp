@@ -19,13 +19,6 @@
 #include "esp_adc_cal.h"  // Espressif Analog to Digital Converter (ADC) Calibration Driver library
 #include "myConstants.h"  // all constants in one file + pinout table
 
-/* moved to myConstants - delete section once compile checked
-//   battery operating ranges
-#define HIGH_BATTERY_VOLTAGE 3.70            // 4.2 - 3.7V battery "fully" charged
-#define CHARGE_WARNING_TRIGGER_VOLTAGE 3.20  // trigger voltage to warn that device requires charging
-#define LOW_BATTERY_VOLTAGE 3.00             // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
-*/
-
 int current_battery_level = 100;  // initially set to fully charged, 100%
 
 BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
@@ -104,30 +97,20 @@ bool isBatteryLow(uint32_t battery_voltage) {
 }
 
 /*****************************************************************************
-Description : calculates battery level (percentage) and updates BT Central device
-
-Input Value : battery voltage (in Volts)
-Return Value: -
-*******************************************************************************
-int setBatteryLevel(float battery_voltage) {
-    // do something
-    bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
-    {
-        // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
-*/
-
-/*****************************************************************************
 Description : state machine, primarily to process status LED states
 
-//!constexpr float HIGH_BATTERY_VOLTAGE = 3.70;
-//!constexpr float CHARGE_NOW_VOLTAGE = 3.20;
-//!constexpr float LOW_BATTERY_VOLTAGE = 3.00;
 Input Value : -
 Return Value: -
 *******************************************************************************/
 void processState() {
     float battery_voltage = readBattery();  // in Volts
-    battery_voltage = 3.1;                  // debug test
+
+    battery_voltage = 3.8;               // !debug test line
+
+    //! code over-ride to auto shut-down if battery is critically low (<3V)
+    if (battery_voltage < LOW_BATTERY_VOLTAGE) {
+        flipState = auto_shut_down;
+    }
 
     switch (flipState) {
         case check_BT_connection:
@@ -187,43 +170,35 @@ void processState() {
             break;
 
         case auto_shut_down:
-            /* code */
+            ledTimer_msec = millis();
+            do {
+                rgbLed.ledBlink(rgbLed.red_critically_low_battery, 250);
+
+            } while (((millis() - ledTimer_msec) <= 10000));  //? flash red warning for 10 sec before shutdown
+            Serial.println(F("Battery critically low.  Commencing auto-shutdown!"));
+            // trigger auto shut-down (deep sleep) ref: https://esp32.com/viewtopic.php?t=5624
+            //! ESP32 will only wake-up on restart (cycle power switch or manual press reset button)
+            esp_deep_sleep_start();  
             break;
 
         default:
+            flipState = check_BT_connection;
+            Serial.println(F("processState() default switch-case triggered; check for code bug!"));
             break;
     }
 }
 
-/*
-// RgbLed constructor for common cathode RGB LED
-RgbLed::RgbLed(int red_pin, int green_pin, int blue_pin) : _red_pin(red_pin),
-                                                           _green_pin(green_pin),
-                                                           _blue_pin(blue_pin) {
-    pinMode(_red_pin, OUTPUT);
-    pinMode(_green_pin, OUTPUT);
-    pinMode(_blue_pin, OUTPUT);
-}*/
+//*  ************** not used *******************
 
 /*****************************************************************************
-Purpose     : Blink RGB LED in designated colour
+Description : calculates battery level (percentage) and updates BT Central device
 
-Input Value : statusColour (see RgbLed Class for designated colour choices),
-              Blink interval in msec (interval = on time = off time)
+Input Value : battery voltage (in Volts)
 Return Value: -
-********************************************************************************/
-/*
-void RgbLed::ledBlink(const RgbLed::StatusColour& statusColour,
-                      unsigned long blink_interval_msec) {
-    // switch expression uses clever 1-line approach that evaluates to either 0 or 1
-    //  ref: https://blog.wokwi.com/5-ways-to-blink-an-led-with-arduino/
-    switch ((millis() / blink_interval_msec) % 2) {
-        case 0:  // led off
-            this->setRgbColour(this->led_off);
-            break;
-        case 1:  // led on, displayed in designated colour (passed as argument)
-            this->setRgbColour(statusColour);
-            break;
-    }
-}
+*******************************************************************************
+int setBatteryLevel(float battery_voltage) {
+    // do something
+    bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
+    {
+        // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
 */

@@ -119,17 +119,20 @@ int setBatteryLevel(float battery_voltage) {
 /*****************************************************************************
 Description : state machine, primarily to process status LED states
 
+//!constexpr float HIGH_BATTERY_VOLTAGE = 3.70;
+//!constexpr float CHARGE_NOW_VOLTAGE = 3.20;
+//!constexpr float LOW_BATTERY_VOLTAGE = 3.00;
 Input Value : -
 Return Value: -
 *******************************************************************************/
 void processState() {
     float battery_voltage = readBattery();  // in Volts
-    battery_voltage = 3.9;                  // debug test
+    battery_voltage = 3.1;                  // debug test
 
     switch (flipState) {
         case check_BT_connection:
             if (bleKeyboard.isConnected()) {
-                if (!hasRun) {
+                if (!hasRun) {  // prints message to serial monitor once only
                     Serial.println("Entered flipState : check_BT_connection");
                     Serial.println("flipTurn BLE Device connected!");
                     hasRun = 1;  // toggle flag to run connection notification only once
@@ -139,30 +142,47 @@ void processState() {
             break;
 
         case high_battery_charge:
-            if (millis() - ledTimer_msec <= 5000) {
+            if ((millis() - ledTimer_msec) <= LED_DURATION_MSEC) {
                 rgbLed.setRgbColour(rgbLed.green_high_battery_charge);
+            }
+            if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
+                Serial.println(F("Battery charged: battery voltage above 3.7V"));
                 flipState = check_BT_connection;
             }
             break;
 
         case warning_charge_battery_now:
-            // TODO: add timer 10 sec
-            rgbLed.setRgbColour(rgbLed.magenta_charge_battery_warning);
-
-            flipState = check_BT_connection;
+            if ((millis() - ledTimer_msec) <= LED_DURATION_MSEC) {
+                rgbLed.setRgbColour(rgbLed.magenta_charge_battery_warning);
+            }
+            if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
+                Serial.println(F("Battery adequate: battery voltage 3.7 to 3.2V"));
+                flipState = check_BT_connection;
+            }
             break;
 
         case low_battery:
-            rgbLed.ledBlink(rgbLed.red_critically_low_battery, 1000);
+            if ((millis() - ledTimer_msec) <= LED_DURATION_MSEC) {
+                rgbLed.ledBlink(rgbLed.red_critically_low_battery, 500);
+            }
+            if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
+                Serial.println(F("Charge Battery NOW"));
+                flipState = check_BT_connection;
+            }
             break;
 
         case battery_status:
             if (battery_voltage >= HIGH_BATTERY_VOLTAGE) {
                 flipState = high_battery_charge;
+                Serial.println(F("Battery status case: Battery charge high"));
+
             } else if ((battery_voltage >= CHARGE_NOW_VOLTAGE) && (battery_voltage < HIGH_BATTERY_VOLTAGE)) {
                 flipState = warning_charge_battery_now;
+                Serial.println(F("Battery status case: Battery adequate - battery voltage 3.7 to 3.2V"));
+
             } else if ((battery_voltage >= LOW_BATTERY_VOLTAGE) && (battery_voltage < CHARGE_NOW_VOLTAGE)) {
                 flipState = low_battery;
+                Serial.println(F("Battery status case: Battery charge low.  Charge battery now!"));
             }
             break;
 

@@ -36,8 +36,6 @@ enum entryStates_t { check_BT_connection = 1,  // set enum 1 to 10 rather than d
 extern entryStates_t flipState;
 
 
-
-
 // globals, defined in main
 //int current_battery_level;  
 
@@ -46,6 +44,7 @@ extern BleKeyboard bleKeyboard;
 //timer - declared as global in flipTurn-main.cpp
 extern unsigned long ledTimer_msec;
 
+// run-once flag
 extern bool hasRun;
 
 /******************************************************

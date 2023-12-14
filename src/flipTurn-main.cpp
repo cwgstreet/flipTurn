@@ -98,11 +98,13 @@ extern int current_battery_level;  // initially set to fully charged, 100%
 //timer - global
 unsigned long ledTimer_msec = 0;
 
+//unsigned long ledTimer_value = 0;  //! debug line; delete after bug identified
+
 bool hasRun = 0;  // run flag to control single execution within loop
 
 void setup() {
     Serial.begin(115200);
-    delay(2500);  // give serial monitor time to initialise to display early status messages
+    delay(STARTUP_DELAY_MSEC);  // give serial monitor time to initialise to display early status messages
 
     //flipState = check_BT_connection;
     flipState = battery_status;
@@ -138,9 +140,12 @@ void loop() {
 
         else if (button.triggered(HOLD)) {
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
+            ledTimer_msec = millis();  //! update times; trying to debug flipState
             flipState = battery_status;
 
             Serial.println("Long Press = Eject / show Battery Status Colour");
+            //Serial.println("ledTimer_msec = ");
+            //Serial.print(ledTimer_msec);
         }
     }
 

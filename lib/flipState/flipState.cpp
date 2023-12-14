@@ -105,7 +105,7 @@ Return Value: -
 void processState() {
     float battery_voltage = readBattery();  // in Volts
 
-    battery_voltage = 3.8;               // !debug test line
+    //battery_voltage = 3.8;               // !debug test line
 
     //! code over-ride to auto shut-down if battery is critically low (<3V)
     if (battery_voltage < LOW_BATTERY_VOLTAGE) {

@@ -120,7 +120,9 @@ void processState() {
                     Serial.println("flipTurn BLE Device connected!");
                     hasRun = 1;  // toggle flag to run connection notification only once
                 }
-                rgbLed.setRgbColour(rgbLed.blue_BT_connected);
+                rgbLed.setRgbColour(rgbLed.blue_BT_connected);  // solid blue LED if connected
+            } else {
+                rgbLed.ledBlink(rgbLed.blue_BT_connected, 750);  // flash blue LED if no connection
             }
             break;
 

@@ -6,11 +6,15 @@
 flipTurn is a wireless, battery-operated / rechargeable foot operated page-turner designed to work with iPad music apps like Unreal Book.  Based on an ESP-32 microcontroller, the device uses BLE (Bluetooth Low Energy) to communicate with the iPad.
 
 <br>
+<br>
+<br>
+<br>
+<br>
 
 
 ## Operation
 
-The flipTurn footswitch emulates a BT-105 series Airturn device. 
+The flipTurn footswitch emulates a BT-105 series Airturn device and sends a limited set of simple keyboard commands. 
 
 Using bluetooth, flipTurn pairs the foot-switch peripheral with central device (in my case, an iPad or iPhone).  To connect the peripheral in IOS: Settings -> Bluetooth -> find flipTurn and click to pair.
 
@@ -31,8 +35,8 @@ Once paired, the peripheral will automatically re-pair upon startup.
 |flashing Blue| Looking for Bluetooth Connection
 | solid Blue| Bluetooth Connected
 | Green| High Battery charge (~3.7 - 4.2V)
-| Magenta| Charge Now Warning (~3.2 to 3.7V)
-| Red| Low Battery Warning (~ 3 to 3.2V)
+| Magenta| Charge Battery Now  (~3.2 to 3.7V)
+| Red| Low Battery Warning  (~ 3 to 3.2V)
 |Flashing Red| Preparing to auto shutdown (< 3V).  Charge battery to reset
 
 On power-up, RGB LED shows battery status for four seconds before indicating Bluetooth connection status.

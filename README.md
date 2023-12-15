@@ -77,6 +77,8 @@ Hardware (circuit and 3D print) is licensed under a
 
 
 -----
+<img align="right" src="*.png#gh-light-mode-only" width="250"/> 
+<img align="right" src="*.jpg#gh-dark-mode-only" width="2500"/>  
 
 <img align="Left" src="images/flipTurnLogo.png" width="250"/>
 

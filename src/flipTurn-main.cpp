@@ -75,157 +75,34 @@
 #include <BleKeyboard.h>
 #include <Bounce2.h>
 
-#include "esp_adc_cal.h"
-
 // internal (user) libraries:
+#include "flipState.h"    //  library to manage flipTurn state machine
 #include "myConstants.h"  // all constants in one file + pinout table
 #include "press_type.h"   // wrapper library further abstracting Yabl / Bounce2 switch routines
 
 //? ************** Selective Debug Scaffolding *********************
-// Selective debug scaffold set-up; comment out appropriate lines below to disable debugging tests at pre-processor stage
-//   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore don't use #ifdef 0
+// Selective debug scaffold: comment out  lines below to disable debugging tests at pre-processor stage
+//   Note: #ifdef preprocessor simply tests if the symbol's been defined; therefore #ifdef 0 will not work!
 //   Ref: https://stackoverflow.com/questions/16245633/ifdef-debug-versus-if-debug
 //? *****************************************************************
-#define DEBUG 1  // uncomment to debug
+// #define DEBUG 1  // uncomment to debug
 //? ************ end Selective Debug Scaffolding ********************
 
-//   battery operating ranges
-#define HIGH_BATTERY_VOLTAGE 3.70  // 4.2 - 3.7V battery "fully" charged
-#define LOW_BATTERY_VOLTAGE 3.00   // lower bound battery operating range (DW01 battery protection circuit triggers at 2.4V )
+extern const byte BLE_DELAY;       // Delay (milliseconds) to prevent BT congestion
+extern int current_battery_level;  // initially set to fully charged, 100%
 
-int current_battery_level = 100;  // initially set to fully charged, 100%
+// timer - global
+unsigned long ledTimer_msec = 0;
 
-const byte BLE_DELAY = 10;  // Delay (milliseconds) to prevent BT congestion
-
-// blekeyboard instantiation params: (BT device name, BT Device manufacturer, Battery Level)
-BleKeyboard bleKeyboard("flipTurn", "CW Greenstreet", current_battery_level);
-
-bool hasRun = 0;  // run flag to control single execution within loop
-
-/*****************************************************************************
-Description : Reads the battery voltage through the voltage divider at AO pin (FireBeetle-ESP32, DFR0478)
-*!             Must solder-bridge zero-ohm pads to enable voltage divider hardware (ref DFR0478 Ver3 schematic)
-
-              Uses eFuse calibrations, if present (ESP32-E), otherwise alternative characterisation used
-              In comparison with a regular voltmeter, ESP32 vs. multimeter values differ only ~0.05V
-Input Value : -
-Return Value: battery voltage in volts
----------------------------------
-Ref:  ADC1_CHANNEL_0 Enumeration
-https://docs.espressif.com/projects/esp-idf/en/v4.1.1/api-reference/peripherals/adc.html#_CPPv414ADC1_CHANNEL_0)
-********************************************************************************/
-float readBattery() {
-    uint32_t value = 0;
-    int rounds = 11;
-    esp_adc_cal_characteristics_t adc_chars;
-
-    // battery voltage divided by 2 can be measured at GPIO36 (ADC1_CHANNEL0)
-    adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
-    switch (esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars)) {
-        case ESP_ADC_CAL_VAL_EFUSE_TP:
-#ifdef DEBUG
-            // Serial.println("Characterized using Two Point Value");
-#endif
-            break;
-        case ESP_ADC_CAL_VAL_EFUSE_VREF:
-#ifdef DEBUG
-            // Serial.printf("Characterised using eFuse Vref (%d mV)\r\n", adc_chars.vref);
-#endif
-            break;
-        default:
-            Serial.printf("Characterised using Default Vref (%d mV)\r\n", 1100);
-    }
-
-    // to avoid noise, sample the pin several times and average the result
-    for (int i = 1; i <= rounds; i++) {
-        value += adc1_get_raw(ADC1_CHANNEL_0);
-    }
-    value /= (uint32_t)rounds;
-
-    // due to the voltage divider (1M+1M), multiply value by 2 and convert mV to V
-    return esp_adc_cal_raw_to_voltage(value, &adc_chars) * 2.0 / 1000.0;
-}
-
-/*****************************************************************************
-Description : Tests for low battery charge (<=3V) and update BT Central device
-                with (%) battery charge level
-
-Input Value : battery_voltage (volts)
-Return Value: true / false
-********************************************************************************/
-bool isBatteryLow(uint32_t battery_voltage) {
-    static unsigned long updateTimer_msec = 0;
-
-    if (millis() - updateTimer_msec > 1000) {
-        bleKeyboard.setBatteryLevel(
-            battery_voltage >= HIGH_BATTERY_VOLTAGE ? 100 : 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
-        delay(BLE_DELAY);
-        // Serial.printf("Battery: %d%%\n", 10 + 90 * (battery_voltage - LOW_BATTERY_VOLTAGE) / (HIGH_BATTERY_VOLTAGE - LOW_BATTERY_VOLTAGE));
-        updateTimer_msec = millis();
-    }
-
-    return battery_voltage <= LOW_BATTERY_VOLTAGE ? true : false;
-}
-
-/*****************************************************************************
-Description : calculates battery level (percentage) and updates BT Central device
-
-Input Value : battery voltage (in Volts)
-Return Value: -
-*******************************************************************************
-int setBatteryLevel(float battery_voltage) {
-    // do something
-    bleKeyboard.setBatteryLevel(current_battery_level);  // update battery level
-    {
-        // batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE)
-*/
-
-//  Ref: https://www.w3schools.com/colors/colors_picker.asp
-struct StatusColour {
-    int red, green, blue;  // rgb values, permissible values 0 - 255.
-};
-
-// pre-define status notification colours
-StatusColour blue_BT_connected{0, 0, 255};
-StatusColour green_fully_charged_battery{0, 255, 0};
-StatusColour magenta_low_battery{255, 255, 0};  // used magenta as orange colour was not distinct
-StatusColour red_critically_low_battery{255, 0, 0};
-StatusColour led_off{0, 0, 0};  //common cathode - current sourcing
-
-// TODO: explore gamma corrections to RGB luminosity (due to different voltages) for acceptable orange to replace magenta
-
-/*****************************************************************************
-Description : sets a defined colour on RGB LED by setting R, G and B values in an array
-                const pass by ref avoids inefficient copying yet prevents any changes to underlying struct
-
-Input Value : R, G and B values for a specific colour output
-                see https://www.w3schools.com/colors/colors_picker.asp
-Return Value: - n/a -
-********************************************************************************/
-void setRgbColour(const StatusColour& statusColour) {
-    analogWrite(RED_LED_PIN, statusColour.red);
-    analogWrite(GREEN_LED_PIN, statusColour.green);
-    analogWrite(BLUE_LED_PIN, statusColour.blue);
-}
-
-/*****************************************************************************
-Description : blinks red (RGB) LED
-
-Input Value : LED state ON : OFF
-Return Value: -
-********************************************************************************/
-void RedLedState(bool state) {
-    setRgbColour(led_off);
-    if (state) {
-        setRgbColour(red_critically_low_battery);
-    } else {
-        setRgbColour(led_off);
-    }
-}
+// run-once flags
+bool hasRun = 0;           // run flag to control single execution within loop
+bool flipStateHasRun = 0;  // run flag to run flipState config once
 
 void setup() {
     Serial.begin(115200);
+    delay(STARTUP_DELAY_MSEC);  // give serial monitor time to initialise to display early status messages
+
+    // flipState = battery_status;  // show battery status at power-up
 
 #ifdef DEBUG
     Serial.println("Preparing flipTurn for BLE connection");
@@ -233,88 +110,50 @@ void setup() {
 
     bleKeyboard.begin();
 
-    // initialise button (eg switch) press_type set-up code (pin, pullup mode, callback function
+    // initialise button (eg foot switch); see press_type set-up code
     button.begin(SWITCH_PIN);
-
-    // set-up RGB LED
-    pinMode(RED_LED_PIN, OUTPUT);
-    pinMode(GREEN_LED_PIN, OUTPUT);
-    pinMode(BLUE_LED_PIN, OUTPUT);
 
 }  // end setup
 
 void loop() {
     yield();  // let ESP32 background functions play through to avoid potential WDT reset
-    button.update();
 
-    float battery_voltage = readBattery();  // in Volts
-    battery_voltage = 3.0;                  //! temporary debug line - remove!
-
-    static unsigned long flash_timer = 0;
-
-    unsigned long current_time;
-    bool flash_Led = false;
-
-    current_time = millis();
-    if (isBatteryLow(battery_voltage)) {
-        if (current_time - flash_timer > 1000)
-            flash_timer = millis();
-    } else {  // Force any current flash off if battery recovers
-        flash_timer = 0;
+    // automatically show battery status on LED at device start-up
+    if (!flipStateHasRun) {  // flag ensures this runs once only
+        ledTimer_msec = millis();  // get timer mark for flipState
+        flipState = battery_status;
+#ifdef DEBUG
+        Serial.println("--------------------------");
+        Serial.print("flipStateHasRun; flipState = ");
+        Serial.println(flipState);
+        Serial.println("--------------------------");
+#endif
+        flipStateHasRun = 1;  // toggle flag to run connection notification only once
     }
 
-    flash_Led = (current_time - flash_timer >= 900) && (current_time - flash_timer <= 1000) ? true : false;
+    processState();
 
-    /*
-    #ifdef DEBUG  // test LED colours
-        setRgbColour(blue_BT_connected);
-        delay(1000);
-        setRgbColour(green_fully_charged_battery);
-        delay(1000);
-        setRgbColour(magenta_low_battery);
-        delay(1000);
-        setRgbColour(red_critically_low_battery);
-        delay(1000);
-    #endif
-    */
-
-    // TODO:  auto-shutdown if battery_voltage < 3V
-
-    if (bleKeyboard.isConnected()) {
-        setRgbColour(blue_BT_connected);
-        delay(50); //! temporary debug line.  Blocking!  remove
-
-        battery_voltage = 3.0;  //! temporary debug line - remove!
-
-        RedLedState(flash_Led ? true : false);
- 
-
-        if (hasRun = 0) {
-            Serial.println("flipTurn BLE Device now connected!");
-            hasRun = 1;  // toggle flag to run connection notification only once
-        }
-
-        //! warning: delay() is blocking but necessary to prevent BT GATT overflow errors; must keep short or interferes with button presses
-        delay(BLE_DELAY);  //  optimised through trial & error, where no delay gives BT GATT overflow errors
+    // monitor switch button with response depending on designated pressTypes (Single Press, Double Press, Hold Press)
+    if (button.update()) {
+        // true = when a switch (button press) event triggered
 
         if (button.triggered(SINGLE_TAP)) {
-            yield();  // Do (almost) nothing - yield allows ESP8266 background functions
             bleKeyboard.write(KEY_DOWN_ARROW);
             Serial.println("Single Tap = Down Arrow");
         }
 
-        if (button.triggered(DOUBLE_TAP)) {
-            yield();  // Do (almost) nothing -- yield allows ESP8266 background functions
+        else if (button.triggered(DOUBLE_TAP)) {
             bleKeyboard.write(KEY_UP_ARROW);
             Serial.println("Double Tap = Up Arrow");
         }
 
-        if (button.triggered(LONG_PRESS)) {
-            yield();                             // Do (almost) nothing -- yield allows ESP8266 background functions
+        else if (button.triggered(HOLD)) {
             bleKeyboard.write(KEY_MEDIA_EJECT);  // toggles visibility of IOS virtual on-screen keyboard
+            ledTimer_msec = millis();            //! update times; trying to debug flipState
+            flipState = battery_status;
+
             Serial.println("Long Press = Eject / show Battery Status Colour");
         }
-
-    }  // end if ( bleKeyboard.isConnected() )
+    }
 
 }  // end loop()

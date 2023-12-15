@@ -5,7 +5,7 @@
  *  C W Greenstreet, Ver1, 7Sep21
  *    MIT Licence - Released into the public domain
  *
- * This wrapper library encapsulates and integrates selected fetures from
+ * This wrapper library encapsulates and integrates selected features from
  *    1) Yabl (Yet another button library for Arduino)
  *           https://github.com/yergin/Yabl
  *    2) Bounce2 (debouncng library)
@@ -13,7 +13,7 @@
  *
  * ************************************************************ */
 
-#ifndef PRESS_TYPE_H
+#ifndef PRESS_TYPE_H  // header guard
 #define PRESS_TYPE_H
 
 #if ARDUINO >= 100  // this if-else block manages depreciated versions of Arduino IDE
@@ -28,8 +28,8 @@
 
 enum pressType_T { NO_PRESS,
                    SHORT_PRESS,
-                   LONG_PRESS,
-                   DOUBLE_PRESS };
+                   DOUBLE_PRESS,
+                   LONG_PRESS};
 
 // pressEventCode_T defined in implementation file, press_type.cpp, hence extern keyword
 extern pressType_T pressEventCode;

@@ -1,22 +1,20 @@
 # flipTurn
 
-
-<img align="right" src="images/10E8D329-E4C9-4EC1-8C14-E52BE17179A1.png" width="150"/> 
-
+<img align="right" src="images/10E8D329-E4C9-4EC1-8C14-E52BE17179A1.png" width="125"/> 
 
 
+flipTurn is a wireless, battery-operated / rechargeable foot operated page-turner designed to work with iPad music apps like Unreal Book.  Based on an ESP-32 microcontroller, the device uses BLE (Bluetooth Low Energy) to communicate with the iPad.
 
+<br>
 
-
-ESP-32 based BLE foot operated page-turner designed to work with iPad music apps like Unreal Book
 
 ## Operation
 
-the flipTurn footswitch emulates a BT-105 series Airturn device. 
+The flipTurn footswitch emulates a BT-105 series Airturn device. 
 
-It uses BLE (Bluetooth Low Energy) to pair the foot-switch peripheral with central device (in my case, an iPad or iPhone).  To connect the peripheral in IOS: Settings -> Bluetooth -> find flipTurn and click to pair.
+Using bluetooth, flipTurn pairs the foot-switch peripheral with central device (in my case, an iPad or iPhone).  To connect the peripheral in IOS: Settings -> Bluetooth -> find flipTurn and click to pair.
 
-Once foot-switch is paired to iPad device, in Unreal Book App, go to Settings -> Airturn -> Airturn setup.  If flipTurn is not listed as connected, click Add Keyboard Device.
+Once the footswitch is paired to the iPad, you need to confirm that it will be seen by the music app.  Open Unreal Book App, go to Settings -> Airturn -> Airturn setup.  If flipTurn is not listed as connected, click Add Keyboard Device.
 
 Once paired, the peripheral will automatically re-pair upon startup.
 
@@ -46,12 +44,15 @@ On power-up, RGB LED shows battery status for four seconds before indicating Blu
 
 * DFRobot Firebeetle ESP-32 [DFR0478 module](https://www.dfrobot.com/product-1590.html?tracking=5bb8307c07f05&gclid=CjwKCAjw5P2aBhAlEiwAAdY7dJ-QGfzxyblFBYGZIF1oe9mBKURqpCOLsVRYEaOLaDYofkDmhq_u7BoCOLoQAvD_BwE)
 * Rechargeable LiPo battery
-* Slide Switch
+* SPDT Slide Switch
+* MicroSwitch, V-156-1C25 
+* 5mm RGB LED, Common Cathode
 
-#flipTurn Case
-3D-printed footswitch case, inspired by 
 
-See project at Printables for 3D print files.
+### 3D Printed Case
+The 3D-printed footswitch case was a ground-up full CAD rebuild, inspired by [Ruiz Brother's wired USB footswitch, Adafruit](https://learn.adafruit.com/USB-foot-switch-circuit-python/overview)
+
+See [project at Printables]() for  print files.
 
 
 ## Licence
@@ -77,8 +78,8 @@ Hardware (circuit and 3D print) is licensed under a
 
 
 -----
-<img align="right" src="*.png#gh-light-mode-only" width="250"/> 
-<img align="right" src="*.jpg#gh-dark-mode-only" width="2500"/>  
+<!-- img align="right" src="x.png#gh-light-mode-only" width="250"/> 
+<!-- img align="right" src="x.jpg#gh-dark-mode-only" width="2500"/-->  
 
 <img align="Left" src="images/flipTurnLogo.png" width="250"/>
 

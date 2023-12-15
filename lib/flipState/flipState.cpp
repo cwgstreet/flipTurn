@@ -105,7 +105,7 @@ Return Value: -
 void processState() {
     float battery_voltage = readBattery();  // in Volts
 
-    //battery_voltage = 3.8;               // !debug test line
+    // battery_voltage = 3.8;               // !debug test line
 
     //! code over-ride to auto shut-down if battery is critically low (<3V)
     if (battery_voltage < LOW_BATTERY_VOLTAGE) {
@@ -131,6 +131,13 @@ void processState() {
             if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
                 Serial.println(F("Battery charged: battery voltage above 3.7V"));
                 flipState = check_BT_connection;
+#ifdef DEBUG
+                Serial.println();
+                Serial.println("--------------------------");
+                Serial.print("flipState high battery charge; battery voltage = ");
+                Serial.println(battery_voltage);
+                Serial.println("--------------------------");
+#endif
             }
             break;
 
@@ -141,6 +148,13 @@ void processState() {
             if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
                 Serial.println(F("Battery adequate: battery voltage 3.7 to 3.2V"));
                 flipState = check_BT_connection;
+#ifdef DEBUG
+                Serial.println();
+                Serial.println("--------------------------");
+                Serial.print("flipState warning battery charge; battery voltage = ");
+                Serial.println(battery_voltage);
+                Serial.println("--------------------------");
+#endif
             }
             break;
 
@@ -151,6 +165,13 @@ void processState() {
             if ((millis() - ledTimer_msec) > LED_DURATION_MSEC) {
                 Serial.println(F("Charge Battery NOW"));
                 flipState = check_BT_connection;
+#ifdef DEBUG
+                Serial.println();
+                Serial.println("--------------------------");
+                Serial.print("flipState low battery charge; battery voltage = ");
+                Serial.println(battery_voltage);
+                Serial.println("--------------------------");
+#endif
             }
             break;
 
@@ -178,7 +199,7 @@ void processState() {
             Serial.println(F("Battery critically low.  Commencing auto-shutdown!"));
             // trigger auto shut-down (deep sleep) ref: https://esp32.com/viewtopic.php?t=5624
             //! ESP32 will only wake-up on restart (cycle power switch or manual press reset button)
-            esp_deep_sleep_start();  
+            esp_deep_sleep_start();
             break;
 
         default:

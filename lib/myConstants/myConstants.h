@@ -30,13 +30,13 @@
  *   GND         GND        Split line ground between switch and RGB LED
  *   A0 (IO36)   BATT_PIN   Read battery voltage (must bridge Rx and Ry zero ohm resistor pads on Firebeetle voltage divider)
  *   D6 (IO10)   SWITCH_PIN Microswitch; enable built-in pullup resistor, eg pinMode(D6, INPUT_PULLUP);
- *   34 (IOxx)   R-LED      (future) Red anode RGB LED (xx ohm current limiting resistor)
- *   35 (IOxx)   G-LED      (future) Green anode RGB LED (xx ohm current limiting resistor)
- *   15 (IOxx )  B-LED      (future) Blue anode RGB LED (xx ohm current limiting resistor)
+ *   19 (IOxx)   R-LED      (future) Red anode RGB LED (xx ohm current limiting resistor)
+ *   23 (IOxx)   G-LED      (future) Green anode RGB LED (xx ohm current limiting resistor)
+ *   18 (IOxx )  B-LED      (future) Blue anode RGB LED (xx ohm current limiting resistor)
  *  *******************************************************
  *    Note:  See Firebeetle pin mapping table for full board pin-out; pin number 35 is same as GPIO35 / IO35
- * 
- * 
+ *
+ *
  *   Initial prototype (not used in final device):
  *   -------    --------    -----------------------------------------------
  *   D2 (IO25)   R-LED      Red anode RGB LED (xx ohm current limiting resistor)
@@ -74,9 +74,9 @@ constexpr int BATT_PIN = A0;    // Read battery voltage (must bridge Rx and Ry z
 constexpr int SWITCH_PIN = D6;  // microswitch (wired NO; need to enable internal pullup)
 
 // RGB pwm pin assignments
-constexpr int RED_LED_PIN = D2;
-constexpr int GREEN_LED_PIN = D3;
-constexpr int BLUE_LED_PIN = D4;
+constexpr int RED_LED_PIN = 19;    // GPIO15
+constexpr int GREEN_LED_PIN = 23;  // GPIO35
+constexpr int BLUE_LED_PIN = 18;   // GPIO34
 
 // ---------------------------------------------------------
 // Baudrate:  Recommend 74480 baud rate for ESP8266 devices to match ESP8266 fixed bootloader initialisation speed

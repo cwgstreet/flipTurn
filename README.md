@@ -1,32 +1,18 @@
 # flipTurn
 
 
-<img align="left" src="images/10E8D329-E4C9-4EC1-8C14-E52BE17179A1.png" width="300"/> 
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+<img align="right" src="images/10E8D329-E4C9-4EC1-8C14-E52BE17179A1.png" width="150"/> 
 
 
-:construction:  ***unfinished - project under development***  :construction:
+
+
+
 
 ESP-32 based BLE foot operated page-turner designed to work with iPad music apps like Unreal Book
 
 ## Operation
 
-the flipTurn footswitch emulates a BT200 Airturn device. 
+the flipTurn footswitch emulates a BT-105 series Airturn device. 
 
 It uses BLE (Bluetooth Low Energy) to pair the foot-switch peripheral with central device (in my case, an iPad or iPhone).  To connect the peripheral in IOS: Settings -> Bluetooth -> find flipTurn and click to pair.
 
@@ -88,3 +74,9 @@ Hardware (circuit and 3D print) is licensed under a
 [cc-by]: http://creativecommons.org/licenses/by/4.0/
 [cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
 [cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
+
+
+-----
+
+<img align="Left" src="images/flipTurnLogo.png" width="250"/>
+

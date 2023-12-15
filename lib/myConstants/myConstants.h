@@ -30,18 +30,18 @@
  *   GND         GND        Split line ground between switch and RGB LED
  *   A0 (IO36)   BATT_PIN   Read battery voltage (must bridge Rx and Ry zero ohm resistor pads on Firebeetle voltage divider)
  *   D6 (IO10)   SWITCH_PIN Microswitch; enable built-in pullup resistor, eg pinMode(D6, INPUT_PULLUP);
- *   19 (IOxx)   R-LED      (future) Red anode RGB LED (xx ohm current limiting resistor)
- *   23 (IOxx)   G-LED      (future) Green anode RGB LED (xx ohm current limiting resistor)
- *   18 (IOxx )  B-LED      (future) Blue anode RGB LED (xx ohm current limiting resistor)
+ *   19 (IOxx)   R-LED      Red anode RGB LED (80 ohm current limiting resistor)
+ *   23 (IOxx)   G-LED      Green anode RGB LED (12 ohm current limiting resistor)
+ *   18 (IOxx )  B-LED      Blue anode RGB LED (12 ohm current limiting resistor)
  *  *******************************************************
  *    Note:  See Firebeetle pin mapping table for full board pin-out; pin number 35 is same as GPIO35 / IO35
  *
  *
- *   Initial prototype (not used in final device):
+ *   Initial prototype (this pin configuration not used in final device):
  *   -------    --------    -----------------------------------------------
- *   D2 (IO25)   R-LED      Red anode RGB LED (xx ohm current limiting resistor)
- *   D3 (IO26)   G-LED      Green anode RGB LED (xx ohm current limiting resistor)
- *   D4 (IO26 )  B-LED      Blue anode RGB LED (xx ohm current limiting resistor)
+ *   D2 (IO25)   R-LED      Red anode RGB LED (80 ohm current limiting resistor)
+ *   D3 (IO26)   G-LED      Green anode RGB LED (12 ohm current limiting resistor)
+ *   D4 (IO26 )  B-LED      Blue anode RGB LED (12 ohm current limiting resistor)
  */
 
 //!  A0 Battery divider (GPIO36)
@@ -50,15 +50,16 @@
 //!   To avoid that, the battery must be measured before the wifi is activated.
 
 /*
- *
- *  5mm RGB LED - Common Cathode   Source: AliExpress
- *   Pin        Function      Comment
- *   -------    --------      ------------------------
- *   1          Red anode     Typ Vf (@ If=20mA) = 2.0V
- *   2          GND           Common Cathode
- *   3          Green anode   Typ Vf (@ If=20mA) = 3.2V
- *   4          Blue anode    Typ Vf (@ If=20mA) = 3.1V
- * *******************************************************/
+ *  ************************************************************************************
+ *   5mm RGB LED - Common Cathode   Source: AliExpress
+ * 
+ *    Pin    Function     Comment                       Current limiting resistor 
+ *    ----   --------     ------------------------      -------------------------
+ *    1      Red anode    Typ Vf (@ If=20mA) = 2.0V      80 ohm
+ *    2      GND          Common Cathode
+ *    3      Green anode  Typ Vf (@ If=20mA) = 3.2V      12 ohm
+ *    4      Blue anode   Typ Vf (@ If=20mA) = 3.1V      12 ohm
+ * ************************************************************************************/
 
 //******************************************************
 //? Constants

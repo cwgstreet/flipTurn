@@ -39,7 +39,7 @@
  *
  *   Initial prototype (this pin configuration not used in final device):
  *   -------    --------    -----------------------------------------------
- *   D2 (IO25)   R-LED      Red anode RGB LED (80 ohm current limiting resistor)
+ *   D2 (IO25)   R-LED      Red anode RGB LED (82 ohm current limiting resistor)
  *   D3 (IO26)   G-LED      Green anode RGB LED (12 ohm current limiting resistor)
  *   D4 (IO26 )  B-LED      Blue anode RGB LED (12 ohm current limiting resistor)
  */
@@ -55,7 +55,7 @@
  * 
  *    Pin    Function     Comment                       Current limiting resistor 
  *    ----   --------     ------------------------      -------------------------
- *    1      Red anode    Typ Vf (@ If=20mA) = 2.0V      80 ohm
+ *    1      Red anode    Typ Vf (@ If=20mA) = 2.0V      82 ohm
  *    2      GND          Common Cathode
  *    3      Green anode  Typ Vf (@ If=20mA) = 3.2V      12 ohm
  *    4      Blue anode   Typ Vf (@ If=20mA) = 3.1V      12 ohm

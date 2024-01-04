@@ -5,7 +5,7 @@
  *  C W Greenstreet, Ver1, 7Sep21
  *    MIT Licence - Released into the public domain
  *
- * Library encapsulates and integrates selected fetures from
+ * Library encapsulates and integrates selected features from
  *    1) Yabl (Yet another button library for Arduino)
  *           https://github.com/yergin/Yabl
  *    2) Bounce2 (debouncng library)
